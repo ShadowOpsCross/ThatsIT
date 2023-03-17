@@ -1,0 +1,23 @@
+name: CI
+run-name: My-Fat-Guy
+on:
+  push:
+    branches:
+      -master
+      
+jobs:
+
+
+      my_marlyn:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Print fat Manson!
+          run : echo "Hello Fat Manson!"
+      
+      
+      
+      my_manson:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Print fat Manson!
+          run : echo "Hello Fat Manson!"
