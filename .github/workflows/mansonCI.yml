@@ -25,12 +25,14 @@ jobs:
             echo "Application name ${{ env.APPLICATION_NAME }}"
             
             
-        - name: List folder
+        - name: List folder before 
           run : ls -la
           
         - name: Git clone
           uses: actions/checkout@v1
-        
+          
+        - name: List folder after
+          run : ls -la
       
       
       
