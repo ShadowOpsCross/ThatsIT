@@ -1,5 +1,5 @@
 name: MansonIsSoFat
-env:
+env: 
   APPLICATION_NAME: "MyDaun"
   PACKAGE_NAME    : "Daun_file_ver-${{ github.sha }}"
   
@@ -15,14 +15,18 @@ jobs:
       my_marlyn:
         runs-on: ubuntu-latest
         steps:
+        
         - name: Print fat Manson!
           run : echo "Hello Fat Manson!"
+          
+ 
           
         - name: Pull some messages
           run : 
             echo "Pon!"
             echo "marlynissofatguy!"
             echo "Application name ${{ env.APPLICATION_NAME }}"
+            
             
             
         - name: List folder before 
