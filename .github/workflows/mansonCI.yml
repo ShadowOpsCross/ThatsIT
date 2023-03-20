@@ -24,8 +24,12 @@ jobs:
             echo "marlynissofatguy!"
             echo "Application name ${{ env.APPLICATION_NAME }}"
             
-        - name: List current folder
+            
+        - name: List folder
           run : ls -la
+          
+        - name: Git clone
+          uses: actions/checkout@v1
         
       
       
@@ -39,4 +43,10 @@ jobs:
           
         - name: Printing deploy pachage
           run : echo "Deployment package name is ${{ env.PACKAGE_NAME }}"
+          
+        - name: Lets name some packages of they are here 1
+          run: aws --version
+          
+        - name: Lets name some packages of they are here 2
+          run: zip 
       
