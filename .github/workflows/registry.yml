@@ -9,7 +9,7 @@ on:
 env:
   DOCKER_USERNAME: ${{ secrets.shadowcrosstwink }}
   DOCKER_PASSWORD: ${{ secrets.Arsenii89890076 }}
-  DOCKER_REGISTRY: https://hub.docker.com/repository/docker/shadowcrosstwink/registry/general
+  DOCKER_REGISTRY: https://registry.hub.docker.com
 
 jobs:
   build-and-push:
