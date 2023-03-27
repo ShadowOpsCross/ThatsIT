@@ -24,13 +24,6 @@ jobs:
       - name: TEST secrets
         run: echo ${{ secrets.DOCKER_USERNAME }} & echo ${{ secrets.DOCKER_PASSWORD }} & echo ${{ secrets.DOCKER_ACCESS_TOKEN }}
      
-       
-      - name: Test
-        run: mvn clean verify -U
-      - name: build
-        run: ./mvnw compile jib:dockerBuild
-      - name: push
-        run:  docker push odfsoft/guess-game:latest
       
 
   manual_build_and_push_docker_image:
@@ -45,8 +38,5 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
-        
-    - name: Checkout code
-      uses: actions/checkout@v2
     - name: Build the Docker image
       run: docker build . --file dockerfile --tag my-image-name:$(date +%s)
