@@ -4,7 +4,6 @@ RUN apt-get update && apt-get upgrade
 RUN apt-get install nginx -y
 RUN mkdir -p /var/run/sshd
 RUN apt update && \
-    apt install -y openjdk-11-jdk && \
     apt install -y openssh-server
 RUN useradd -rm -d /home/remote_user -s /bin/bash remote_user && \
     echo remote_user:password1234 | chpasswd
