@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 env:
-  DOCKER_USERNAME: ${{ secrets.shadowcrosstwink }}
-  DOCKER_PASSWORD: ${{ secrets.Arsenii89890076 }}
+  DOCKER_USERNAME: ${{ secrets.DOKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOKER_ACCESS_TOKEN }}
   DOCKER_REGISTRY: registry
 
 jobs:
