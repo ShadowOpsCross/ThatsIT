@@ -1,62 +1,33 @@
-name: Docker Build and Push
+name: Publish Docker image
 
 on:
-  push:
-    branches:
-      - master
-  workflow_dispatch:
-
-env:
-  DOCKER_USERNAME: ${{ secrets.shadowcrosstwink }}
-  DOCKER_PASSWORD: ${{ secrets.Arsenii89890076 }}
-  DOCKER_REGISTRY: shadowcrosstwink/registry
-
+  release:
+    types: [published]
 
 jobs:
-  build-and-push:
+  push_to_registry:
+    name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Login to Docker registry
-      uses: docker/login-action@v1
-      with:
-        registry: ${{ env.DOCKER_REGISTRY }}
-        username: ${{ env.DOCKER_USERNAME }}
-        password: ${{ env.DOCKER_PASSWORD }}
-
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        push: true
-        tags: |
-          ${{ env.DOCKER_REGISTRY }}/my-image:${{ github.sha }}
-          ${{ env.DOCKER_REGISTRY }}/my-image:latest
-  build-and-push-manual:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
-     
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Login to Docker registry
-      uses: docker/login-action@v1
-      with:
-        registry: ${{ env.DOCKER_REGISTRY }}
-        username: ${{ env.DOCKER_USERNAME }}
-        password: ${{ env.DOCKER_PASSWORD }}
-
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        push: true
-        tags: |
-          ${{ env.DOCKER_REGISTRY }}/my-image:${{ github.run_id }}-${{ inputs.tag }}
-          ${{ env.DOCKER_REGISTRY }}/my-image:${{ inputs.tag }}
+      - name: Check out the repo
+        uses: actions/checkout@v3
+      
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: shadowcrosstwink/registry
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          push: true
+          tags:   ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
