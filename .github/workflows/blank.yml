@@ -23,6 +23,9 @@ jobs:
        DOCKER_USERNAME:        ${{ secrets.DOCKER_USERNAME }}
        DOCKER_PASSWORD:        ${{ secrets.DOCKER_PASSWORD }}
        DOCKER_ACCESS_TOKEN:    ${{ secrets.DOCKER_ACCESS_TOKEN }}
+    - name: TEST secrets
+      run: echo ${{ secrets.DOCKER_USERNAME }}
+     
        
     - name: Test
       run: mvn clean verify -U
