@@ -42,6 +42,6 @@ jobs:
       run: docker build -t your-docker-username/your-docker-repo-name:latest
     - name: Push Docker image
       run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_ACCESS_TOKEN }} shadowcrosstwink
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} shadowcrosstwink
           docker tag shado shadowcrosstwink/registry:latest
           docker push shadowcrosstwink/registry:latest
