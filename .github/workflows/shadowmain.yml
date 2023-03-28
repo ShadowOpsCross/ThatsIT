@@ -26,7 +26,7 @@ jobs:
       - name: sudosu
         run: sudo su
       - name: apt-utils
-        run: apt-get install apt-utils
+        run: sudo apt-get install apt-utils
       - name: Build Docker image
         run: docker build -t shadowcrosstwink/registry .
       - name: Push Docker image
