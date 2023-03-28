@@ -28,11 +28,7 @@ jobs:
       - name: Build Docker image
         run: docker build -t shadowcrosstwink/registry .
       - name: Push Docker image
-        run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} shadowcrosstwink
-          docker tag shado shadowcrosstwink/registry:latest
-          docker push shadowcrosstwink/registry:latest
-     
+        run: push shadowcrosstwink/registry
       
 
   manual_build_and_push_docker_image:
