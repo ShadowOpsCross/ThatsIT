@@ -39,7 +39,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
     - name: Build Docker image
-      run: docker build -t https://hub.docker.com/repository/docker/shadowcrosstwink/registry
+      run: docker build -t shadowcrosstwink/registry
     - name: Push Docker image
       run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} shadowcrosstwink
