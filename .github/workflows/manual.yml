@@ -23,7 +23,7 @@ jobs:
         with:
           context: .
           push: false
-          tags: shadowcrosstwink/registry:${{ inputs.image_tag }}
+          tags: shadowcrosstwink/registry:${{ inputs.tag }}
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
@@ -34,4 +34,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: shadowcrosstwink/registry:${{ inputs.image_tag }}
+          tags: shadowcrosstwink/registry:${{ inputs.tag }}
