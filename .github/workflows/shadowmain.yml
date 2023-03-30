@@ -25,9 +25,7 @@ jobs:
       run: |
         docker image build -t shadowcrosstwink/registry .
         docker push shadowcrosstwink/registry
-        with:
-          tags:
-          - $GITHUB_SHA
+        
         
   manual_input_job:
     name:  MANUAL
