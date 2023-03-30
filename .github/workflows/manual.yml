@@ -25,5 +25,5 @@ jobs:
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
       - name: Build and Push the Docker image
         run: |
-          docker image build -t shadowcrosstwink/registry .
-          docker push shadowcrosstwink/registry
+          docker image build -t shadowcrosstwink/registry:${{ inputs.image_tag }} .
+          docker push shadowcrosstwink/registry:${{ inputs.image_tag }}
