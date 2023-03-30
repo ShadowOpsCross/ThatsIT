@@ -27,7 +27,6 @@ jobs:
         docker push shadowcrosstwink/registry
         with:
           tags:
-          tags:
           - $GITHUB_SHA
         
   manual_input_job:
