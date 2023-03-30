@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       workflow_name:
-        description: 'Enter the name of the workflow to run'
+        description: 'Name of workflow:'
         required: true
         default: 'shadowmain.yml'
     
