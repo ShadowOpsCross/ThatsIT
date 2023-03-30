@@ -1,10 +1,12 @@
 name: Build and Push Docker Image
 
 on:
-  push:
-    branches:
-      - master
   workflow_dispatch:
+    inputs:
+      workflow_name:
+        description: 'Enter the name of the workflow to run'
+        required: true
+        default: 'shadowmain.yml'
     
 
       
@@ -25,18 +27,3 @@ jobs:
         docker image build -t shadowcrosstwink/registry .
         docker push shadowcrosstwink/registry
         
-        
-  
-        
-  user_input_job:
-    name: User Input Job
-    runs-on: ubuntu-latest
-    steps:
-      - name: Prompt for User Input
-        id: ask-user
-        run: |
-          echo "Enter the name of the workflow:"
-          read workflow_name
-          echo "::set-output name=workflow_name::$workflow_name"
-      - name: Run Workflow
-        uses: ./.github/workflows/${{ steps.ask-user.outputs.workflow_name }}
