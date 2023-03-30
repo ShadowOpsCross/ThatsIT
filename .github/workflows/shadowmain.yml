@@ -23,5 +23,5 @@ jobs:
     - name: Build the Docker image
       run: |
         docker image build -t shadowcrosstwink/registry:${{ github.sha }} .
-        docker push shadowcrosstwink/registry:${{ github.sha }
+        docker push shadowcrosstwink/registry:${{ github.sha }}
         
