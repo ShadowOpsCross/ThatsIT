@@ -31,13 +31,13 @@ jobs:
     - name: Build the Docker image
       run: |
         docker image build -t shadowcrosstwink/registry:${{ github.sha }} .
+    - name: Push the Docker image
+      run: |
+        docker push shadowcrosstwink/registry:${{ github.sha }}
     - name: Scan Docker image
       run: |
           docker pull shadowcrosstwink/registry:${{ github.sha }}
           trivy image shadowcrosstwink/registry:${{ github.sha }} --format json > trivy_report.json
-    - name: Push the Docker image
-      run: |
-        docker push shadowcrosstwink/registry:${{ github.sha }}
    
 
 
