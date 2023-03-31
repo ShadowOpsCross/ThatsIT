@@ -47,6 +47,6 @@ jobs:
           push: false
           tags:  shadowcrosstwink/registry:${{ github.sha }}
           outputs: |
-            path=trivy_report.json
+            path=reports/trivy_report.json
           labels: |
             trivy_report=true
