@@ -47,11 +47,6 @@ jobs:
       with:
         name: trivy-report
         path: ./reports/
-      env:
-        GITHUB_TOKEN: ${{ secrets.GIHUB_TOKEN }}
-        REPO: ThatsIT
-        FOLDER: /.github/workflows/reports/
-      if: always()
     - name: Push the Docker image
       run: |
         docker push shadowcrosstwink/registry:${{ github.sha }}
