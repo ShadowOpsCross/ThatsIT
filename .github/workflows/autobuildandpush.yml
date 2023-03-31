@@ -33,7 +33,7 @@ jobs:
         docker image build -t shadowcrosstwink/registry:${{ github.sha }} .
     - name: Check for vulnerabilities
       run: |
-          trivy shadowcrosstwink/registry:${{ github.sha }}
+          trivy shadowcrosstwink/registry:${{ github.sha }} --exit-code 1 --format json | tee trivy-report.json
       id: trivy
 
     - name: Upload report to GitHub artifacts
