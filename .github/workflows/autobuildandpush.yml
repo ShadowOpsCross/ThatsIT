@@ -24,7 +24,7 @@ jobs:
       run: |
         docker image build -t shadowcrosstwink/registry:${{ github.sha }} .
     - name: Scan Docker image
-      uses: aquasecurity/trivy-action@v2
+      uses: aquasecurity/trivy-action@v0.9.2
       with:
         image-ref: shadowcrosstwink/registry:${{ github.sha }}
         exit-code-on-high-severity: 1
