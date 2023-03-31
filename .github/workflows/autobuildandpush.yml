@@ -31,14 +31,20 @@ jobs:
     - name: Build the Docker image
       run: |
         docker image build -t shadowcrosstwink/registry:${{ github.sha }} .
-    - name: Scan Docker image
+    - name: Scan Docker image for vulnerabilities
+      run: trivy shadowcrosstwink/registry:${{ github.sha }} --format=json | tee trivy_report.json
+
+    - name: Check Trivy report for vulnerabilities
       run: |
-        trivy shadowcrosstwink/registry:${{ github.sha }} -f json -o /github/workspace/report.json || echo "Thats Great"
-    - name: Upload report to artifacts
+        if grep -q '"Vulnerabilities": \[\]' trivy_report.json; then
+          echo "That's Great! No vulnerabilities found."
+        else
+          echo "Vulnerabilities found. See report in the artifacts."
+        fi
+      shell: bash
+
+    - name: Upload Trivy report to GitHub artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: vulnerability-report
-        path: .github/workflows/reports/report.json
-    - name: Push the Docker image
-      run: |
-        docker push shadowcrosstwink/registry:${{ github.sha }}
+        name: Trivy Report
+        path: trivy_report.json
