@@ -32,7 +32,7 @@ jobs:
       run: |
         docker push shadowcrosstwink/registry:${{ github.sha }}
     - name: Save Trivy report
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v0.38.3
       with:
         name: trivy-report
         path: /tmp/trivy
