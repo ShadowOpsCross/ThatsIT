@@ -31,23 +31,30 @@ jobs:
     - name: Build the Docker image
       run: |
         docker image build -t shadowcrosstwink/registry:${{ github.sha }} .
+    - name: Build Docker image
+      run: docker build -t my-image .
+
+    - name: Check for vulnerabilities
+      run: |
+          trivy shadowcrosstwink/registry:${{ github.sha }}
+      id: trivy
+
+    - name: Upload report to GitHub artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: trivy-report
+        path: |
+          ./reports/
+    - name: Move artifact to ThatsIT repo
+      uses: actions/upload-artifact@v2
+      with:
+        name: trivy-report
+        path: ./reports/
+      env:
+        GITHUB_TOKEN: ${{ secrets.GIHUB_TOKEN }}
+        REPO: ThatsIT
+        FOLDER: /.github/workflows/reports/
+      if: always()
     - name: Push the Docker image
       run: |
         docker push shadowcrosstwink/registry:${{ github.sha }}
-    - name: Scan Docker image
-      run: |
-          docker pull shadowcrosstwink/registry:${{ github.sha }}
-          trivy image shadowcrosstwink/registry:${{ github.sha }} --format json > trivy_report.json
-   
-
-
-    - name: Upload Trivy Report to DockerHub artifacts
-      uses: docker/build-push-action@v2
-      with:
-          context: .
-          push: false
-          tags:  shadowcrosstwink/registry:${{ github.sha }}
-          outputs: |
-            path=shadowcrosstwink/registry/trivy_report.json
-          labels: |
-            trivy_report=true
