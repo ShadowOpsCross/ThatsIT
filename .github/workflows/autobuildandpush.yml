@@ -31,9 +31,6 @@ jobs:
     - name: Build the Docker image
       run: |
         docker image build -t shadowcrosstwink/registry:${{ github.sha }} .
-    - name: Build Docker image
-      run: docker build -t my-image .
-
     - name: Check for vulnerabilities
       run: |
           trivy shadowcrosstwink/registry:${{ github.sha }}
