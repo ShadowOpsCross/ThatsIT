@@ -38,15 +38,15 @@ jobs:
 
       - name: Scan Docker image
         run: |
-          docker pull shadowcrosstwink/registry:${{ github.sha }}
-          trivy image shadowcrosstwink/registry:${{ github.sha }} --format json > trivy_report.json
+          docker pull shadowcrosstwink/registry:${{ inputs.tag }}
+          trivy image shadowcrosstwink/registry:${{ inputs.tag }} --format json > trivy_report.json
 
       - name: Upload Trivy Report to DockerHub artifacts
         uses: docker/build-push-action@v2
         with:
           context: .
           push: false
-          tags:  shadowcrosstwink/registry:${{ github.sha }}
+          tags:  shadowcrosstwink/registry:${{ inputs.tag }}
           outputs: |
             path=trivy_report.json
           labels: |
