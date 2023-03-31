@@ -24,7 +24,7 @@ jobs:
       run: |
         docker image build -t shadowcrosstwink/registry:${{ github.sha }} .
     - name: Scan Docker image
-      uses: aquasecurity/trivy-action@v0.9.2
+      uses: aquasecurity/trivy-action@v1.7.0
       with:
         image-ref: shadowcrosstwink/registry:${{ github.sha }}
         exit-code-on-high-severity: 1
@@ -32,7 +32,7 @@ jobs:
       run: |
         docker push shadowcrosstwink/registry:${{ github.sha }}
     - name: Save Trivy report
-      uses: actions/upload-artifact@v0.38.3
+      uses: actions/upload-artifact@v2.2.4
       with:
         name: trivy-report
         path: /tmp/trivy
