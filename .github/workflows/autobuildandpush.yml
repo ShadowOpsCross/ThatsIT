@@ -23,18 +23,31 @@ jobs:
     - name: Build the Docker image
       run: |
         docker image build -t shadowcrosstwink/registry:${{ github.sha }} .
-    - name: Scan Docker image
-      uses: aquasecurity/trivy-action@v1.7.0
-      with:
-        image-ref: shadowcrosstwink/registry:${{ github.sha }}
-        exit-code-on-high-severity: 1
     - name: Push the Docker image
       run: |
         docker push shadowcrosstwink/registry:${{ github.sha }}
-    - name: Save Trivy report
-      uses: actions/upload-artifact@v2.2.4
+    - name: Install Trivy
+      run: |
+          sudo apt-get update
+          sudo apt-get install wget apt-transport-https gnupg lsb-release -y
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+          echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update
+          sudo apt-get install trivy -y
+
+    - name: Scan Docker image
+      run: |
+          docker pull shadowcrosstwink/registry:${{ github.sha }}
+          trivy image shadowcrosstwink/registry:${{ github.sha }} --format json > trivy_report.json
+
+    - name: Upload Trivy Report to DockerHub artifacts
+      uses: docker/build-push-action@v2
       with:
-        name: trivy-report
-        path: /tmp/trivy
-      
-        
+          context: .
+          push: false
+          tags:  shadowcrosstwink/registry:${{ github.sha }}
+          outputs: |
+            name=trivy_report
+            path=trivy_report.json
+          labels: |
+            trivy_report=true
