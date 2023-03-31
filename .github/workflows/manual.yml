@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'The tag to use for the Docker image'
+        description: 'Enter Docker image tag:'
         required: true
         default: 'latest'
       
@@ -28,7 +28,7 @@ jobs:
           docker image build -t shadowcrosstwink/registry:${{ inputs.tag }} .
           docker push shadowcrosstwink/registry:${{ inputs.tag }}
       - name: Install Trivy
-      run: |
+        run: |
           sudo apt-get update
           sudo apt-get install wget apt-transport-https gnupg lsb-release -y
           wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
@@ -36,14 +36,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install trivy -y
 
-    - name: Scan Docker image
-      run: |
+      - name: Scan Docker image
+        run: |
           docker pull shadowcrosstwink/registry:${{ github.sha }}
           trivy image shadowcrosstwink/registry:${{ github.sha }} --format json > trivy_report.json
 
-    - name: Upload Trivy Report to DockerHub artifacts
-      uses: docker/build-push-action@v2
-      with:
+      - name: Upload Trivy Report to DockerHub artifacts
+        uses: docker/build-push-action@v2
+        with:
           context: .
           push: false
           tags:  shadowcrosstwink/registry:${{ github.sha }}
