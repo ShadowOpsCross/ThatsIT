@@ -31,10 +31,9 @@ jobs:
     - name: Build the Docker image
       run: |
         docker image build -t shadowcrosstwink/registry:${{ github.sha }} .
-        docker pull golang:1.5.1
     - name: Scan Docker image for vulnerabilities
       run: |
-        trivy golang:1.5.1 --exit-code 1 --format json | tee trivy-report.json
+        trivy shadowcrosstwink/registry:${{ github.sha }} --exit-code 1 --format json | tee trivy-report.json
     - name: Upload Trivy report as artifact
       uses: actions/upload-artifact@v2
       with:
