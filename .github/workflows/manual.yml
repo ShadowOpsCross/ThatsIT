@@ -35,20 +35,14 @@ jobs:
       - name: Build Docker Image
         run: |
           docker image build -t shadowcrosstwink/registry:${{ inputs.tag }} .
-      - name: Scan Docker image
+      - name: Scan Docker image for vulnerabilities
         run: |
-          trivy image shadowcrosstwink/registry:${{ inputs.tag }} --format json > trivy_report.json
-      - name: Push Docker Image 
-        run: |
-          docker push shadowcrosstwink/registry:${{ inputs.tag }}
-      
-      - name: Upload Trivy Report to DockerHub artifacts
-        uses: docker/build-push-action@v2
+          trivy image shadowcrosstwink/registry:${{ inputs.tag }} --format json | tee trivy-report.json
+      - name: Upload Trivy report as artifact
+        uses: actions/upload-artifact@v2
         with:
-          context: .
-          push: false
-          tags:  shadowcrosstwink/registry:${{ inputs.tag }}
-          outputs: |
-            path=trivy_report.json
-          labels: |
-            trivy_report=true
+          name: Trivy report
+          path: trivy-report.json
+      - name: Push the Docker image
+        run: |
+          docker push shadowcrosstwink/registry:${{ inputs.tag }} 
