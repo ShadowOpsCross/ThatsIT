@@ -1,9 +1,9 @@
-name: Deploy to S3 Bucket
+name: Deploy to S3 and EC2
 
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   deploy:
@@ -11,15 +11,19 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-          aws-region: eu-central-1
-      - name: Sync files to S3
+      - name: Install AWS CLI
         run: |
-          aws s3 . sync  s3://shadowbowl --exclude ".git/*" --delete
-      - name: Deploy EC2 Instance
+          sudo apt-get update
+          sudo apt-get install -y awscli
+      - name: Deploy to S3
         run: |
-          ssh -i "deployfromgithub.pem" ubuntu@3.73.130.117 'sudo systemctl restart httpd'
+          aws s3 cp index.html s3://shadowbowl
+          echo 'index.html file copied to S3 bucket.'
+      - name: Install SSH
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ssh
+      - name: Copy index.html to EC2
+        run: |
+          chmod 400 deployfromgithub.pem
+          scp -o "StrictHostKeyChecking=no" -i deployfromgithub.pem index.html ubuntu@ec2-3-73-130-117.eu-central-1.compute.amazonaws.com
