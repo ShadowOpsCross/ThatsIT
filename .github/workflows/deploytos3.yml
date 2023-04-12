@@ -18,10 +18,10 @@ jobs:
        - name: Set up SSH key
          run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.AWS_PUBLIC_KEY }}" > ~/.ssh/id_rsa
-          chmod 400 ~/.ssh/id_rsa
+          echo "${{ secrets.AWS_PUBLIC_KEY }}" > publik.pem
+          chmod 400 publik.pem
        - name: SSH to AWS Instance
-         run: ssh -vvv -i ~/.ssh/id_rsa ubuntu@3.76.212.173  'echo "Hello, world!"'
+         run: ssh -vvv -i publik.pem ubuntu@3.76.212.173  'echo "Hello, world!"'
        - name: SSH to AWS Instance
          run: |
-          ssh -i ~/.ssh/id_rsa ubuntu@3.76.212.173 
+          ssh -i publik.pem ubuntu@3.76.212.173 
