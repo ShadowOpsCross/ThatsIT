@@ -15,16 +15,10 @@ jobs:
            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
            aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
            aws-region:  eu-central-1 
-       - name: Create SSH directory
+       - name: Set up SSH key
          run: |
           mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-
-       - name: Install SSH key
-         run: echo "${{ secrets.deployfromgithub.pem }}" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
-
-       - name: Add EC2 host to known_hosts
-         run: ssh-keyscan -H 18.156.128.237 >> ~/.ssh/known_hosts
-
-       - name: Deploy to EC2
-         run: ssh -o StrictHostKeyChecking=no -i ~/.ssh ubuntu@3.73.130.117 'cd . && nohup python -m http.server 80 > /dev/null 2>&1 &'
+          echo "${{ secrets.AWS_PUBLIC_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+       - name: SSH to AWS Instance
+         run: ssh -i ~/.ssh/id_rsa ubuntu@3.76.212.173 'echo "Hello, world!"'
