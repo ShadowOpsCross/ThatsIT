@@ -21,5 +21,7 @@ jobs:
           echo "${{ secrets.AWS_PUBLIC_KEY }}" > ~/.ssh/id_rsa
           chmod 400 ~/.ssh/id_rsa
        - name: SSH to AWS Instance
+         run: ssh -vvv -i ~/.ssh/id_rsa ubuntu@3.76.212.173  'echo "Hello, world!"'
+       - name: SSH to AWS Instance
          run: |
           ssh -i ~/.ssh/id_rsa ubuntu@3.76.212.173 
