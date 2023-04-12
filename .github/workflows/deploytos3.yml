@@ -21,7 +21,5 @@ jobs:
           echo "${{ secrets.AWS_PUBLIC_KEY }}" > publik.pem
           chmod 400 publik.pem
        - name: SSH to AWS Instance
-         run: ssh -vvv -i publik.pem ubuntu@3.76.212.173  'echo "Hello, world!"'
-       - name: SSH to AWS Instance
          run: |
           ssh -i publik.pem ubuntu@3.76.212.173 
