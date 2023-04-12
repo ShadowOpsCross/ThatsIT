@@ -1,25 +1,37 @@
-name: Deploy to S3 Bucket and Launch on EC2
+name: Deploy to AWS
+
 on:
   push:
     branches:
-      - master
+      - main
+
 jobs:
   deploy:
-   runs-on: ubuntu-latest
-   steps:
-       - name: Checkout
-         uses: actions/checkout@v2
-       - name: Configure AWS credentials
-         uses: aws-actions/configure-aws-credentials@v1
-         with:
-           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-           aws-region:  eu-central-1 
-       - name: Set up SSH key
-         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.AWS_PUBLIC_KEY }}" > publik.pem
-          chmod 400 publik.pem
-       - name: SSH to AWS Instance
-         run: |
-          ssh -i publik.pem ubuntu@3.76.212.173 
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: eu-central-1
+
+      - name: Install SSH client
+        run: sudo apt-get update && sudo apt-get install -y openssh-client
+
+      - name: SSH into AWS instance
+        uses: appleboy/ssh-action@master
+        with:
+          host: 3.76.212.173
+          username: ubuntu
+          password: ''
+
+      - name: Copy index.html file to AWS instance
+        run: scp index.html ubuntu@${{ secrets.AWS_INSTANCE_IP }}:/var/www/html
+
+      - name: Restart Apache server on AWS instance
+        run: ssh ubuntu@${{ secrets.AWS_INSTANCE_IP }} "sudo service apache2 restart"
