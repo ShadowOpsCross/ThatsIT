@@ -22,4 +22,4 @@ jobs:
           chmod 400 ~/.ssh/id_rsa
        - name: SSH to AWS Instance
          run: |
-          ssh -i ~/.ssh/id_rsa 3.76.212.173 'echo "Hello, world!"'
+          ssh -i ~/.ssh/id_rsa ubuntu@3.76.212.173 'echo "Hello, world!"'
