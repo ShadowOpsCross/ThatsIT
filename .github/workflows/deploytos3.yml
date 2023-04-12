@@ -22,5 +22,5 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
        - name: SSH to AWS Instance
          run: |
-          chmod 400 public.pem
+          chmod 400 ~/.ssh/id_rsa
           ssh -i ~/.ssh/id_rsa ec2-3-76-212-173.eu-central-1.compute.amazonaws.com 'echo "Hello, world!"'
