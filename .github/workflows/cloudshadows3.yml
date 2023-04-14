@@ -3,10 +3,6 @@ Parameters:
     Type: String
     Default: ShadowOpsCross 
     Description: GitHub username
-  GitHubRepo:
-    Type: String
-    Default: ThatsIT
-    Description: GitHub repository name
   GitHubBranch:
     Type: String
     Default: master
