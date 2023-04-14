@@ -18,7 +18,7 @@ jobs:
     - name: Deploy CloudFormation stack
       uses: aws-actions/aws-cloudformation-github-deploy@v1
       with:
-        name: shadastack
-        template: ./cloudshadows3.yml
+        name: shadstack
+        template: cloudshadows3.yml
         capabilities: CAPABILITY_NAMED_IAM
         region: eu-central-1
