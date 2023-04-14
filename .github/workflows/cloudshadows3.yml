@@ -3,10 +3,18 @@ Parameters:
     Type: String
     Default: ShadowOpsCross 
     Description: GitHub username
+  GitHubRepo:
+    Type: String
+    Default: <Your GitHub repository name>
+    Description: GitHub repository name
   GitHubBranch:
     Type: String
     Default: master
     Description: GitHub repository branch name
+  GitHubDirectory:
+    Type: String
+    Default: /.github/workflows/
+    Description: GitHub directory name
 
   Resources:
     S3Bucket:
@@ -15,17 +23,17 @@ Parameters:
         BucketName: shadowbowlen
         AccessControl: PublicRead
 
-  S3BucketPolicy:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket: !Ref S3Bucket
-      PolicyDocument:
-        Statement:
-          - Sid: PublicReadForGetBucketObjects
-            Effect: Allow
-            Principal: "*"
-            Action: "s3:GetObject"
-            Resource: !Join [ '', [ "arn:aws:s3:::", !Ref S3Bucket, "/*" ] ]
+    S3BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+      'Bucket: !Ref S3Bucket
+        PolicyDocument:
+          Statement:
+            - Sid: PublicReadForGetBucketObjects
+              Effect: Allow
+              Principal: "*"
+              Action: "s3:GetObject"
+              Resource: !Join [ '', [ "arn:aws:s3:::", !Ref S3Bucket, "/*" ] ]
 
   S3BucketIndexObject:
     Type: AWS::S3::Object
