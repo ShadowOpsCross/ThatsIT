@@ -16,7 +16,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
         aws-region: eu-central-1
     - name: Deploy CloudFormation stack
-      uses: aws-actions/aws-cloudformation-action@v1.5
+      uses: aws-actions/aws-cloudformation-github-deploy@v1
       with:
         stack-name: shadastack
         template-file: ./cloudshadows3.yml
