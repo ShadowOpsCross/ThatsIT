@@ -26,8 +26,8 @@ Parameters:
     S3BucketPolicy:
       Type: AWS::S3::BucketPolicy
       Properties:
-      'Bucket: !Ref S3Bucket
-        PolicyDocument:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
           Statement:
             - Sid: PublicReadForGetBucketObjects
               Effect: Allow
