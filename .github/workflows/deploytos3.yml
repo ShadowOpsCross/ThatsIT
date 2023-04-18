@@ -8,29 +8,26 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      -   name: Install AWS CLI v2
-          run:  |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip
-            unzip -q /tmp/awscliv2.zip -d /tmp
-            rm /tmp/awscliv2.zip
-            sudo /tmp/aws/install --update
-            rm -rf /tmp/aws/
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Install AWS CLI
-        uses: install-aws-cli-action@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-          aws-region: eu-central-1
+    - name: Install AWS CLI
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3-pip
+        sudo pip3 install awscli
 
-      - name: Validate CloudFormation Template
-        run: |
-          aws cloudformation validate-template --template-body file://deploytos3.yml
-
-
-      - name: Deploy CloudFormation Stack
-        run: |
-          aws cloudformation deploy --stack-name <stack-name> --template-file workflows/deploytos3.yml --capabilities CAPABILITY_NAMED_IAM
+    - name: Deploy CloudFormation stack
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+        AWS_REGION: eu-central-1
+        STACK_NAME: "mini-civilization"
+        TEMPLATE_URL: "https://raw.githubusercontent.com/ShadowOpsCross/ThatsIT/master/.github/workflows/cloudshadows3.yml"
+      run: |
+        aws cloudformation create-stack \
+          --stack-name $STACK_NAME \
+          --template-url $TEMPLATE_URL \
+          --capabilities CAPABILITY_NAMED_IAM
