@@ -22,7 +22,6 @@ jobs:
       - name: Validate CloudFormation Template
         run: |
           aws cloudformation validate-template --template-body file://deploytos3.yml
-/
 
 
       - name: Deploy CloudFormation Stack
