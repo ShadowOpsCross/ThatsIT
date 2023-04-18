@@ -5,7 +5,7 @@ Parameters:
     Description: GitHub username
   GitHubRepo:
     Type: String
-    Default: <Your GitHub repository name>
+    Default: ThatsIT
     Description: GitHub repository name
   GitHubBranch:
     Type: String
