@@ -26,14 +26,14 @@ Parameters:
     S3BucketPolicy:
       Type: AWS::S3::BucketPolicy
       Properties:
-      Bucket: !Ref S3Bucket
-        PolicyDocument:
-            Statement:
-              - Sid: PublicReadForGetBucketObjects
-                Effect: Allow
-                Principal: "*"
-                Action: "s3:GetObject"
-                Resource: !Join [ '', [ "arn:aws:s3:::", !Ref S3Bucket, "/*" ] ]
+        Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Statement:
+            - Sid: PublicReadForGetBucketObjects
+              Effect: Allow
+              Principal: "*"
+              Action: "s3:GetObject"
+              Resource: !Join [ '', [ "arn:aws:s3:::", !Ref S3Bucket, "/*" ] ]
 
   S3BucketIndexObject:
     Type: AWS::S3::Object
