@@ -21,7 +21,7 @@ jobs:
 
       - name: Validate CloudFormation Template
         run: |
-          aws cloudformation validate-template --template-body file://workflows/deploytos3.yml
+          aws cloudformation validate-template --template-body file://deploytos3.yml
 /
 
 
