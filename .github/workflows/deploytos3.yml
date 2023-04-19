@@ -29,6 +29,6 @@ jobs:
         TEMPLATE_URL: "https://raw.githubusercontent.com/ShadowOpsCross/ThatsIT/master/.github/workflows/cloudshadows3.yml"
       run: |
         aws cloudformation create-stack \
-          name $STACK_NAME \
-          template-url $TEMPLATE_URL \
-          capabilities CAPABILITY_NAMED_IAM
+          --stack-name $STACK_NAME \
+          --template-url $TEMPLATE_URL \
+          --capabilities CAPABILITY_NAMED_IAM
