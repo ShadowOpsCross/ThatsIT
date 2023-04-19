@@ -35,7 +35,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
         AWS_REGION: eu-central-1
         STACK_NAME: "mini-civilization"
-        TEMPLATE_URL: "https://github.com/ShadowOpsCross/ThatsIT/blob/master/.github/workflows/cloudshadows3.yml"
+        TEMPLATE_URL: "https://raw.githubusercontent.com/ShadowOpsCross/ThatsIT/blob/master/.github/workflows/cloudshadows3.yml"
       run: |
         aws cloudformation create-stack \
           --stack-name $STACK_NAME \
