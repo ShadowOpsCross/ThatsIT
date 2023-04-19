@@ -12,13 +12,7 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-      
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-        aws-region: eu-central-1
+    
 
     - name: Install AWS CLI
       run: |
@@ -35,6 +29,6 @@ jobs:
         TEMPLATE_URL: "https://raw.githubusercontent.com/ShadowOpsCross/ThatsIT/master/.github/workflows/cloudshadows3.yml"
       run: |
         aws cloudformation create-stack \
-          --stack-name $STACK_NAME \
-          --template-url $TEMPLATE_URL \
-          --capabilities CAPABILITY_NAMED_IAM
+          name $STACK_NAME \
+          template-url $TEMPLATE_URL \
+          capabilities CAPABILITY_NAMED_IAM
