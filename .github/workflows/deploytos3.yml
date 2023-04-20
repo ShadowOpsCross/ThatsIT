@@ -33,7 +33,7 @@ jobs:
           AWS_REGION: eu-central-1
           STACK_NAME: "mini-civilization"
           TEMPLATE_FILE_PATH: "cloudformation.yml"
-          run: |
+        run: |
            aws cloudformation create-stack \
              --stack-name $STACK_NAME \
              --template-body file://$GITHUB_WORKSPACE/$TEMPLATE_FILE_PATH \
