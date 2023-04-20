@@ -36,7 +36,7 @@ jobs:
         run: |
            aws cloudformation create-stack \
              --stack-name $STACK_NAME \
-             --template-body file://$GITHUB_WORKSPACE/$TEMPLATE_FILE_PATH \
+             --template-body file://${{ github.workspace }}/$TEMPLATE_FILE_PATH \
              --capabilities CAPABILITY_NAMED_IAM
 
 
