@@ -32,12 +32,10 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
           AWS_REGION: eu-central-1
           STACK_NAME: "mini-civilization"
-          TEMPLATE_FILE_PATH: "cloudformation.yml"
-        run: |
-          aws cloudformation create-stack \
-            --stack-name $STACK_NAME \
-            --template-body file://${{ github.workspace }}/$TEMPLATE_FILE_PATH \
-            --capabilities CAPABILITY_NAMED_IAM
-
+          run: |
+              aws cloudformation create-stack \
+                --stack-name $STACK_NAME \
+                --template-body file://cloudformation.yml \
+                --capabilities CAPABILITY_NAMED_IAM
 
 
