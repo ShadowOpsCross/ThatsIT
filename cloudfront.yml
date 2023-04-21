@@ -30,13 +30,13 @@ Resources:
     Type: AWS::S3::BucketPolicy
     Properties:
       Bucket: !Ref S3BucketName
-    PolicyDocument:
-      Statement:
+      PolicyDocument:
+        Statement:
           - Sid: PublicReadForGetBucketObjects
             Effect: Allow
             Principal: "*"
             Action: "s3:GetObject"
-            Resource: !Join [ '', [ "arn:aws:s3:::", !Ref S3Bucket, "/*" ] ]
+            Resource: !Join [ '', [ "arn:aws:s3:::", !Ref S3BucketName, "/*" ] ]
 
   S3BucketIndexObject:
     Type: AWS::S3::Object
