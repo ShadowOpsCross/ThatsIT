@@ -34,9 +34,10 @@ jobs:
           STACK_NAME: "mini-civilization"
         run: |
           aws cloudformation create-stack \
-            --stack-name $STACK_NAME \
-            --template-body file://${{ github.workspace }}/cloudformation.yml \
-            --capabilities CAPABILITY_NAMED_IAM
+          --stack-name $STACK_NAME \
+          --template-body file://${{ github.workspace }}/cloudformation.yml \
+          --capabilities CAPABILITY_NAMED_IAM \
+          --debug
 
 
 
