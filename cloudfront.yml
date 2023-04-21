@@ -20,7 +20,7 @@ Parameters:
     S3Bucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: shadowbowlen
+        BucketName: !Ref shadowbowlen
         AccessControl: PublicRead
 
     S3BucketPolicy:
