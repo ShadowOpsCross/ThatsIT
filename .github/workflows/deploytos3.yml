@@ -35,7 +35,7 @@ jobs:
         run: |
           aws cloudformation create-stack \
           --stack-name $STACK_NAME \
-          --template-body file://${{ github.workspace }}/cloudformation.yml \
+          --template-body file://${{ github.workspace }}/cloudfront.yml \
           --capabilities CAPABILITY_NAMED_IAM \
           --debug
 
