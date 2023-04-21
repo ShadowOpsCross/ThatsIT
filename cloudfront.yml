@@ -23,13 +23,13 @@ Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Ref shadowbowl
+      BucketName: !Ref S3BucketName
       AccessControl: PublicRead
 
   S3BucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
-      Bucket: !Ref shadowbowl
+      Bucket: !Ref S3BucketName
     PolicyDocument:
       Statement:
           - Sid: PublicReadForGetBucketObjects
@@ -41,7 +41,7 @@ Resources:
   S3BucketIndexObject:
     Type: AWS::S3::Object
     Properties:
-      Bucket: !Ref shadowbowl
+      Bucket: !Ref S3BucketName
       Key: index.html
       ContentType: text/html
       Source: https://raw.githubusercontent.com/${GitHubUser}/${GitHubRepo}/${GitHubBranch}/index.html
