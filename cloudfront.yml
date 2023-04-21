@@ -1,50 +1,30 @@
-Parameters:
-  GitHubUser:
-    Type: String
-    Default: ShadowOpsCross 
-    Description: GitHub username
-  GitHubRepo:
-    Type: String
-    Default: ThatsIT
-    Description: GitHub repository name
-  GitHubBranch:
-    Type: String
-    Default: master
-    Description: GitHub repository branch name
-  GitHubDirectory:
-    Type: String
-    Default: /.github/workflows/
-    Description: GitHub directory name
-  S3BucketName:
-    Type: String
-    Description: The name of the S3 bucket to create
-
 Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Ref S3BucketName
+      BucketName: shadowbowl
       AccessControl: PublicRead
 
   S3BucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
-      Bucket: !Ref S3BucketName
+      Bucket: !Ref S3Bucket
       PolicyDocument:
         Statement:
-          - Sid: PublicReadForGetBucketObjects
+          - Sid: PublicReadGetObject
             Effect: Allow
             Principal: "*"
-            Action: "s3:GetObject"
-            Resource: !Join [ '', [ "arn:aws:s3:::", !Ref S3Bucket, "/*" ] ]
+            Action:
+              - s3:GetObject
+            Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]
 
   S3BucketIndexObject:
     Type: AWS::S3::Object
     Properties:
-      Bucket: !Ref S3BucketName
+      Bucket: !Ref S3Bucket
       Key: index.html
       ContentType: text/html
-      Source: https://raw.githubusercontent.com/${GitHubUser}/${GitHubRepo}/${GitHubBranch}/index.html
+      Source: https://raw.githubusercontent.com/ShadowOpsCross/ThatsIT/master/.github/workflows/index.html
 
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
@@ -54,7 +34,7 @@ Resources:
           - DomainName: !GetAtt [S3Bucket, DomainName]
             Id: S3BucketOrigin
             S3OriginConfig:
-              OriginAccessIdentity: ""
+              OriginAccessIdentity: ''
         DefaultRootObject: index.html
         Enabled: true
         DefaultCacheBehavior:
