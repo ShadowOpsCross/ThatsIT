@@ -15,30 +15,33 @@ Parameters:
     Type: String
     Default: /.github/workflows/
     Description: GitHub directory name
+  S3BucketName:
+    Type: String
+    Description: The name of the S3 bucket to create
 
-  Resources:
-    S3Bucket:
-      Type: AWS::S3::Bucket
-      Properties:
-        BucketName: !Ref shadowbowlen
-        AccessControl: PublicRead
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref shadowbowl
+      AccessControl: PublicRead
 
-    S3BucketPolicy:
-      Type: AWS::S3::BucketPolicy
-      Properties:
-        Bucket: !Ref S3Bucket
-      PolicyDocument:
-        Statement:
-            - Sid: PublicReadForGetBucketObjects
-              Effect: Allow
-              Principal: "*"
-              Action: "s3:GetObject"
-              Resource: !Join [ '', [ "arn:aws:s3:::", !Ref S3Bucket, "/*" ] ]
+  S3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref shadowbowl
+    PolicyDocument:
+      Statement:
+          - Sid: PublicReadForGetBucketObjects
+            Effect: Allow
+            Principal: "*"
+            Action: "s3:GetObject"
+            Resource: !Join [ '', [ "arn:aws:s3:::", !Ref S3Bucket, "/*" ] ]
 
   S3BucketIndexObject:
     Type: AWS::S3::Object
     Properties:
-      Bucket: !Ref S3Bucket
+      Bucket: !Ref shadowbowl
       Key: index.html
       ContentType: text/html
       Source: https://raw.githubusercontent.com/${GitHubUser}/${GitHubRepo}/${GitHubBranch}/index.html
@@ -64,3 +67,4 @@ Parameters:
           ViewerProtocolPolicy: redirect-to-https
         ViewerCertificate:
           CloudFrontDefaultCertificate: true
+
