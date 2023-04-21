@@ -30,8 +30,8 @@ Resources:
     Type: AWS::S3::BucketPolicy
     Properties:
       Bucket: !Ref S3BucketName
-    PolicyDocument:
-      Statement:
+      PolicyDocument:
+        Statement:
           - Sid: PublicReadForGetBucketObjects
             Effect: Allow
             Principal: "*"
