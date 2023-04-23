@@ -1,9 +1,10 @@
-Resources:
-  S3Bucket:
+S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: shadowbowl
       AccessControl: PublicRead
+      WebsiteConfiguration:
+        IndexDocument: index.html
 
   S3BucketPolicy:
     Type: AWS::S3::BucketPolicy
@@ -16,7 +17,7 @@ Resources:
             Principal: "*"
             Action:
               - s3:GetObject
-            Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]
+            Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]]
 
   S3BucketIndexObject:
     Type: AWS::S3::Object
