@@ -1,33 +1,54 @@
-S3Bucket:
+AWSTemplateFormatVersion: 2010-09-09
+Description: Create an S3 bucket with an index.html file and a CloudFront distribution
+
+Parameters:
+  BucketName:
+    Type: String
+    Description: S3 bucket name
+    Default: shadowbowl
+  GitHubToken:
+    Type: String
+    Description: GitHub access token
+    NoEcho: true
+  GitHubRepo:
+    Type: String
+    Description: GitHub repository name (owner/repo)
+    Default: ShadowOpsCross/ThatsIT
+  GitHubBranch:
+    Type: String
+    Description: GitHub repository branch
+    Default: master
+
+Resources:
+  S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: shadowbowl
-      AccessControl: PublicRead
-      WebsiteConfiguration:
-        IndexDocument: index.html
-        
-S3BucketPolicy:
+      BucketName: !Ref BucketName
+
+  S3BucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
       Bucket: !Ref S3Bucket
       PolicyDocument:
+        Version: "2012-10-17"
         Statement:
           - Sid: PublicReadGetObject
             Effect: Allow
             Principal: "*"
             Action:
               - s3:GetObject
-            Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]]
-            
-S3BucketIndexObject:
+            Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]
+
+  S3BucketIndexObject:
     Type: AWS::S3::Object
     Properties:
       Bucket: !Ref S3Bucket
       Key: index.html
       ContentType: text/html
-      Source: https://raw.githubusercontent.com/ShadowOpsCross/ThatsIT/master/.github/workflows/index.html
+      Content: !Sub |
+        #include https://raw.githubusercontent.com/${GitHubRepo}/${GitHubBranch}/.github/workflows/index.html
 
-CloudFrontDistribution:
+  CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
@@ -48,5 +69,6 @@ CloudFrontDistribution:
           ViewerProtocolPolicy: redirect-to-https
         ViewerCertificate:
           CloudFrontDefaultCertificate: true
+
 
 
