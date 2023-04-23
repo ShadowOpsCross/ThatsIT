@@ -22,23 +22,14 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Deploy CloudFormation stack
-        uses: aws-actions/aws-cloudformation-action@v1
-        with:
-          action: create-update
-          stack-name: cloufront
-          template: https://raw.githubusercontent.com/ShadowOpsCross/ThatsIT/master/cloudfront.yaml
-          capabilities: CAPABILITY_IAM
-          parameters: |
-            [
-              {
-                "ParameterKey": "BucketName",
-                "ParameterValue": "shadowbowl"
-              },
-              {
-                "ParameterKey": "IndexObjectUrl",
-                "ParameterValue": "https://raw.githubusercontent.com/ShadowOpsCross/ThatsIT/master/.github/workflows/index.html"
-              }
-            ]
+        run: |
+          aws cloudformation deploy \
+            --stack-name cloufront \
+            --template-url https://raw.githubusercontent.com/ShadowOpsCross/ThatsIT/master/cloudfront.yaml \
+            --capabilities CAPABILITY_IAM \
+            --parameter-overrides \
+              BucketName=shadowbowl \
+              IndexObjectUrl=https://raw.githubusercontent.com/ShadowOpsCross/ThatsIT/master/.github/workflows/index.html
 
 
 
