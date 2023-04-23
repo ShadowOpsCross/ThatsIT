@@ -25,7 +25,7 @@ jobs:
         run: |
           aws cloudformation deploy \
             --stack-name cloufront \
-            --template-file ./cloudfront.yaml \
+            --template-file cloudfront.yml \
             --capabilities CAPABILITY_IAM \
             --parameter-overrides \
               BucketName=shadowbowl \
