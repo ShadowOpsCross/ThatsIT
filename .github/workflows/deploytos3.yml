@@ -24,12 +24,12 @@ jobs:
       - name: Deploy CloudFormation stack
         run: |
           aws cloudformation deploy \
-            --stack-name cloufront \
+            --stack-name cloudfront \
             --template-file cloudfront.yml \
             --capabilities CAPABILITY_IAM \
             --parameter-overrides \
               BucketName=shadowbowl \
-              IndexObjectUrl=https://raw.githubusercontent.com/ShadowOpsCross/ThatsIT/master/.github/workflows/index.html
-
+              IndexObjectUrl=https://raw.githubusercontent.com/ShadowOpsCross/ThatsIT/master/.github/workflows/index.html \
+            --no-execute-changeset
 
 
