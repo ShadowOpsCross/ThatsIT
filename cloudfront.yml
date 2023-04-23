@@ -39,14 +39,14 @@ Resources:
               - s3:GetObject
             Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]
 
-  S3BucketIndexObject:
-    Type: AWS::S3::Object
+  MyS3Object:
+    Type: "AWS::CloudFormation::Init"
     Properties:
-      Bucket: !Ref S3Bucket
-      Key: index.html
-      ContentType: text/html
-      Content: !Sub |
-        #include https://raw.githubusercontent.com/${GitHubRepo}/${GitHubBranch}/.github/workflows/index.html
+      config:
+        commands:
+          upload_to_s3:
+            command: aws s3 cp https://raw.githubusercontent.com/${GitHubRepo}/${GitHubBranch}/.github/workflows/index.html s3://shadowbowl/
+            
 
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
