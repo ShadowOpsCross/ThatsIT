@@ -5,8 +5,8 @@ S3Bucket:
       AccessControl: PublicRead
       WebsiteConfiguration:
         IndexDocument: index.html
-
-  S3BucketPolicy:
+        
+S3BucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
       Bucket: !Ref S3Bucket
@@ -18,8 +18,8 @@ S3Bucket:
             Action:
               - s3:GetObject
             Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]]
-
-  S3BucketIndexObject:
+            
+S3BucketIndexObject:
     Type: AWS::S3::Object
     Properties:
       Bucket: !Ref S3Bucket
@@ -27,7 +27,7 @@ S3Bucket:
       ContentType: text/html
       Source: https://raw.githubusercontent.com/ShadowOpsCross/ThatsIT/master/.github/workflows/index.html
 
-  CloudFrontDistribution:
+CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
