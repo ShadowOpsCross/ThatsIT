@@ -30,6 +30,7 @@ jobs:
             --parameter-overrides \
               BucketName=shadowbowl \
               IndexObjectUrl=https://raw.githubusercontent.com/ShadowOpsCross/ThatsIT/master/.github/workflows/index.html \
-            --no-execute-changeset
+              GitHubToken=${{ secrets.GITHUB_TOKEN }}
+
 
 
