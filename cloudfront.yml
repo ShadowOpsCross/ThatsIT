@@ -37,16 +37,7 @@ Resources:
             Principal: "*"
             Action:
               - s3:GetObject
-            Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]    
-
-  S3BucketInit:
-    Type: "AWS::CloudFormation::Init"
-    Metadata:
-      AWS::CloudFormation::Init:
-        upload_to_s3:
-          command: aws s3 cp https://raw.githubusercontent.com/${GitHubRepo}/${GitHubBranch}/.github/workflows/index.html s3://${BucketName}/
-    DependsOn: S3Bucket
-
+            Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
@@ -68,6 +59,24 @@ Resources:
           ViewerProtocolPolicy: redirect-to-https
         ViewerCertificate:
           CloudFrontDefaultCertificate: true
-    DependsOn: S3BucketInit
+
+  MyStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: 'https://my-bucket.s3.amazonaws.com/my-template.yaml'
+      Parameters:
+        BucketName: !Ref BucketName
+        GitHubRepo: !Ref GitHubRepo
+        GitHubBranch: !Ref GitHubBranch
+      TimeoutInMinutes: '60'
+      Tags:
+        - Key: Name
+          Value: 'MyStack'
+    Metadata:
+      AWS::CloudFormation::Init:
+        config:
+          commands:
+            upload_to_s3:
+              command: aws s3 cp https://raw.githubusercontent.com/${GitHubRepo}/${GitHubBranch}/.github/workflows/index.html s3://$BucketName/
 
 
