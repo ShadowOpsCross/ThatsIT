@@ -37,16 +37,15 @@ Resources:
             Principal: "*"
             Action:
               - s3:GetObject
-            Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]
+            Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]    
 
-  MyS3Object:
+  S3BucketInit:
     Type: "AWS::CloudFormation::Init"
-    Properties:
-      config:
-        commands:
-          upload_to_s3:
-            command: aws s3 cp https://raw.githubusercontent.com/${GitHubRepo}/${GitHubBranch}/.github/workflows/index.html s3://shadowbowl/
-            
+    Metadata:
+      AWS::CloudFormation::Init:
+        upload_to_s3:
+          command: aws s3 cp https://raw.githubusercontent.com/${GitHubRepo}/${GitHubBranch}/.github/workflows/index.html s3://${BucketName}/
+    DependsOn: S3Bucket
 
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
@@ -69,6 +68,6 @@ Resources:
           ViewerProtocolPolicy: redirect-to-https
         ViewerCertificate:
           CloudFrontDefaultCertificate: true
-
+    DependsOn: S3BucketInit
 
 
