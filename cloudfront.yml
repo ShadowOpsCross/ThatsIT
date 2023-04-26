@@ -1,8 +1,4 @@
-Resources:
-  MyS3Bucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: shadobowl
+
 Parameters:
   BucketName:
     Type: String
@@ -20,7 +16,12 @@ Parameters:
     Type: String
     Description: GitHub directory path
 
-
+ Resources:
+  MyS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: shadobowl
+      
   MyBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
