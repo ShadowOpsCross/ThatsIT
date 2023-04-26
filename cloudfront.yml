@@ -25,27 +25,6 @@ Resources:
     Properties:
       BucketName: !Ref BucketName
 
-  BucketPolicyRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: BucketPolicyRole
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: s3.amazonaws.com
-            Action: sts:AssumeRole
-      Policies:
-        - PolicyName: BucketPolicyPolicy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - s3:GetObject
-                Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]
-
   S3BucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
@@ -59,8 +38,27 @@ Resources:
             Action:
               - s3:GetObject
             Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]
-      Roles:
-        - !Ref BucketPolicyRole
+
+  CloudFrontDistributionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CloudFrontDistributionRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: CloudFrontDistributionPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]
 
   MyS3Object:
     Type: "AWS::CloudFormation::WaitConditionHandle"
@@ -82,51 +80,51 @@ Resources:
       NotificationARNs:
         - !Ref MyS3Object
 
-  CloudFrontDistributionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: CloudFrontDistributionRole
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: cloudfront.amazonaws.com
-            Action: sts:AssumeRole
-      Policies:
-        - PolicyName: CloudFrontDistributionPolicy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - cloudfront:GetDistribution
-                  - cloudfront:CreateInvalidation
-                Resource: "*"
-
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
         Origins:
-        - DomainName: !GetAtt [S3Bucket, DomainName]
-          Id: S3BucketOrigin
-          S3OriginConfig:
-            OriginAccessIdentity: ''
-      DefaultRootObject: index.html
-      Enabled: true
-      DefaultCacheBehavior:
-        AllowedMethods:
-          - GET
-          - HEAD
-        TargetOriginId: S3BucketOrigin
-        ForwardedValues:
-          QueryString: false
-        ViewerProtocolPolicy: redirect-to-https
+          - DomainName: !GetAtt [S3Bucket, DomainName]
+            Id: S3BucketOrigin
+            S3OriginConfig:
+              OriginAccessIdentity: ''
+        DefaultRootObject: index.html
+        Enabled: true
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - GET
+            - HEAD
+          TargetOriginId: S3BucketOrigin
+          ForwardedValues:
+            QueryString: false
+          ViewerProtocolPolicy: redirect-to-https
+        ViewerCertificate:
+                    CloudFrontDefaultCertificate: true
+        CustomErrorResponses:
+          - ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+        Logging:
+          Bucket: !Ref S3Bucket
+          IncludeCookies: false
+          Prefix: cf-logs/
+        Comment: CloudFront Distribution
+        DefaultRootObject: index.html
+        HttpVersion: http2
+      Tags:
+        - Key: Name
+          Value: CloudFrontDistribution
       ViewerCertificate:
         CloudFrontDefaultCertificate: true
-    Roles:
-      - !Ref CloudFrontDistributionRole
+      WebACLId: ''
+
+Outputs:
+  CloudFrontDistributionURL:
+    Description: CloudFront Distribution URL
+    Value: !Sub "https://${CloudFrontDistribution.DomainName}/index.html"
+
+
 
 
 
