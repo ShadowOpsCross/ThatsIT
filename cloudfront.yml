@@ -2,7 +2,7 @@ Resources:
   MyS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: S3BucketName
+      BucketName: shadobowl
 
   MyBucketPolicy:
     Type: AWS::S3::BucketPolicy
@@ -82,6 +82,22 @@ Resources:
             ResponsePagePath: /index.html
         Enabled: true
 
+  MyStackSet:
+    Type: AWS::CloudFormation::StackSet
+    Properties:
+      StackSetName: MyStackSet
+      TemplateURL: !Ref MyStackTemplateUrl
+      Parameters:
+        - ParameterKey: MyBucketName
+          ParameterValue: !Ref MyS3Bucket
+      Capabilities:
+        - CAPABILITY_NAMED_IAM
+        - CAPABILITY_AUTO_EXPAND
+
+Outputs:
+  CloudFrontURL:
+    Value: !Sub "http://${MyCloudFrontDistribution.DomainName}"
+    Description: CloudFront URL
 
 
 
