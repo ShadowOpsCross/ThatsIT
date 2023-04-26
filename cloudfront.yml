@@ -3,19 +3,19 @@ AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
   BucketName: shadowbowl
     Type: String
-    Description: bucketname 
+    Description: shadowbowl
   GitHubUsername: ShadowOpsCross
     Type: String
-    Description: GitHubUsername
+    Description: ShadowOpsCross
   GitHubRepository: ThatsIT
     Type: String
-    Description:  GitHubRepository
+    Description: ThatsIT
   GitHubBranch: master
     Type: String
-    Description:  GitHubBranch
+    Description: master
   GitHubDirectory: /.github/workflows/
     Type: String
-    Description: branch
+    Description: /.github/workflows/
 
 Resources:
   MyS3Bucket:
