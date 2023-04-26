@@ -1,26 +1,25 @@
+  Parameters:
+    BucketName:
+      Type: String
+      Description: The name of the S3 bucket
+    GitHubUsername:
+      Type: String
+      Description: GitHub username
+    GitHubRepository:
+      Type: String
+      Description: GitHub repository name
+    GitHubBranch:
+      Type: String
+      Description: GitHub branch name
+    GitHubDirectory:
+      Type: String
+      Description: GitHub directory path
 
-Parameters:
-  BucketName:
-    Type: String
-    Description: The name of the S3 bucket
-  GitHubUsername:
-    Type: String
-    Description: GitHub username
-  GitHubRepository:
-    Type: String
-    Description: GitHub repository name
-  GitHubBranch:
-    Type: String
-    Description: GitHub branch name
-  GitHubDirectory:
-    Type: String
-    Description: GitHub directory path
-
- Resources:
-  MyS3Bucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: shadobowl
+  Resources:
+    MyS3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: shadobowl
       
   MyBucketPolicy:
     Type: AWS::S3::BucketPolicy
