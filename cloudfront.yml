@@ -1,26 +1,26 @@
   Parameters:
-    BucketName:
-      Type: String
-      Description: The name of the S3 bucket
-    GitHubUsername:
-      Type: String
-      Description: GitHub username
-    GitHubRepository:
-      Type: String
-      Description: GitHub repository name
-    GitHubBranch:
-      Type: String
-      Description: GitHub branch name
-    GitHubDirectory:
-      Type: String
-      Description: GitHub directory path
+  BucketName:
+    Type: String
+    Description: The name of the S3 bucket
+  GitHubUsername:
+    Type: String
+    Description: GitHub username
+  GitHubRepository:
+    Type: String
+    Description: GitHub repository name
+  GitHubBranch:
+    Type: String
+    Description: GitHub branch name
+  GitHubDirectory:
+    Type: String
+    Description: GitHub directory path
 
-  Resources:
-    MyS3Bucket:
-      Type: AWS::S3::Bucket
-      Properties:
-        BucketName: shadobowl
-      
+Resources:
+  MyS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref BucketName
+
   MyBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
@@ -51,9 +51,9 @@
                 Provider: GitHub
                 Version: 1
               Configuration:
-                Owner: ShadowOpsCross
-                Repo: ThatsIT
-                Branch: master
+                Owner: !Ref GitHubUsername
+                Repo: !Ref GitHubRepository
+                Branch: !Ref GitHubBranch
                 OAuthToken: !Ref GitHubOAuthToken
                 PollForSourceChanges: false
               OutputArtifacts:
@@ -98,18 +98,6 @@
             ResponseCode: 200
             ResponsePagePath: /index.html
         Enabled: true
-
-  MyStackSet:
-    Type: AWS::CloudFormation::StackSet
-    Properties:
-      StackSetName: MyStackSet
-      TemplateURL: !Ref MyStackTemplateUrl
-      Parameters:
-        - ParameterKey: MyBucketName
-          ParameterValue: !Ref MyS3Bucket
-      Capabilities:
-        - CAPABILITY_NAMED_IAM
-        - CAPABILITY_AUTO_EXPAND
 
 Outputs:
   CloudFrontURL:
