@@ -1,128 +1,87 @@
-AWSTemplateFormatVersion: 2010-09-09
-Description: Create an S3 bucket with an index.html file and a CloudFront distribution
-
-Parameters:
-  BucketName:
-    Type: String
-    Description: S3 bucket name
-    Default: shadowbowl
-  GitHubToken:
-    Type: String
-    Description: GitHub access token
-    NoEcho: true
-  GitHubRepo:
-    Type: String
-    Description: GitHub repository name (owner/repo)
-    Default: ShadowOpsCross/ThatsIT
-  GitHubBranch:
-    Type: String
-    Description: GitHub repository branch
-    Default: master
-
 Resources:
-  S3Bucket:
+  MyS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Ref BucketName
+      BucketName: shadowbowl
 
-  S3BucketPolicy:
+  MyBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
-      Bucket: !Ref S3Bucket
+      Bucket: !Ref MyS3Bucket
       PolicyDocument:
-        Version: "2012-10-17"
         Statement:
-          - Sid: PublicReadGetObject
+          - Sid: AllowPublicRead
             Effect: Allow
-            Principal: "*"
-            Action:
-              - s3:GetObject
-            Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]
+            Principal: '*'
+            Action: s3:GetObject
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref MyS3Bucket
+                - '/*'
 
-  CloudFrontDistributionRole:
-    Type: AWS::IAM::Role
+  MyCodePipeline:
+    Type: AWS::CodePipeline::Pipeline
     Properties:
-      RoleName: CloudFrontDistributionRole
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: cloudfront.amazonaws.com
-            Action: sts:AssumeRole
-      Policies:
-        - PolicyName: CloudFrontDistributionPolicy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - s3:GetObject
-                Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]
+      Name: MyCodePipeline
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: GitHubSourceAction
+              ActionTypeId:
+                Category: Source
+                Owner: ThirdParty
+                Provider: GitHub
+                Version: 1
+              Configuration:
+                Owner: ShadowOpsCross
+                Repo: ThatsIT
+                Branch: master
+                OAuthToken: !Ref GitHubOAuthToken
+                PollForSourceChanges: false
+              OutputArtifacts:
+                - Name: SourceOutput
+              RunOrder: 1
+        - Name: Deploy
+          Actions:
+            - Name: S3DeployAction
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: S3
+                Version: 1
+              Configuration:
+                BucketName: !Ref MyS3Bucket
+                Extract: 'true'
+                ObjectKey: index.html
+              InputArtifacts:
+                - Name: SourceOutput
+              RunOrder: 1
 
-  MyS3Object:
-    Type: "AWS::CloudFormation::WaitConditionHandle"
-
-  UploadS3Object:
-    Type: "AWS::CloudFormation::Stack"
-    DependsOn: S3BucketPolicy
-    Properties:
-      TemplateURL: "https://s3-eu-central-1.amazonaws.com/cloudformation-templates-eu-central-1/WaitCondition_S3.template"
-      Parameters:
-        SourceBucket: !Ref S3Bucket
-        SourceObject: "index.html"
-        SourceContent: !Sub |
-          #!/bin/bash
-          cd /opt
-          mkdir www
-          cd www
-          aws s3 cp https://raw.githubusercontent.com/${GitHubRepo}/${GitHubBranch}/.github/workflows/index.html index.html
-      NotificationARNs:
-        - !Ref MyS3Object
-
-  CloudFrontDistribution:
+  MyCloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
+        Comment: CloudFront distribution for my website
+        Aliases:
+          - my-domain-name.example.com
+        DefaultRootObject: index.html
         Origins:
-          - DomainName: !GetAtt [S3Bucket, DomainName]
-            Id: S3BucketOrigin
+          - Id: MyS3BucketOrigin
+            DomainName: !GetAtt MyS3Bucket.RegionalDomainName
             S3OriginConfig:
               OriginAccessIdentity: ''
-        DefaultRootObject: index.html
-        Enabled: true
         DefaultCacheBehavior:
-          AllowedMethods:
-            - GET
-            - HEAD
-          TargetOriginId: S3BucketOrigin
-          ForwardedValues:
-            QueryString: false
-          ViewerProtocolPolicy: redirect-to-https
-        ViewerCertificate:
-                    CloudFrontDefaultCertificate: true
+          TargetOriginId: MyS3BucketOrigin
+          ViewerProtocolPolicy: allow-all
+        PriceClass: PriceClass_100
+        HttpVersion: http2
         CustomErrorResponses:
           - ErrorCode: 404
             ResponseCode: 200
             ResponsePagePath: /index.html
-        Logging:
-          Bucket: !Ref S3Bucket
-          IncludeCookies: false
-          Prefix: cf-logs/
-        Comment: CloudFront Distribution
-        DefaultRootObject: index.html
-        HttpVersion: http2
-      Tags:
-        - Key: Name
-          Value: CloudFrontDistribution
-      ViewerCertificate:
-        CloudFrontDefaultCertificate: true
-      WebACLId: ''
+        Enabled: true
 
-Outputs:
-  CloudFrontDistributionURL:
-    Description: CloudFront Distribution URL
-    Value: !Sub "https://${CloudFrontDistribution.DomainName}/index.html"
 
 
 
