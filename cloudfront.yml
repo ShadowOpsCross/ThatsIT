@@ -4,18 +4,23 @@ Parameters:
   BucketName:
     Type: String
     Description: shadowbowl
+    Default: shadowbowl
   GitHubUsername:
     Type: String
     Description: ShadowOpsCross
+    Default: ShadowOpsCross
   GitHubRepository:
     Type: String
     Description: ThatsIT
+    Default: ThatsIT
   GitHubBranch:
     Type: String
     Description: master
+    Default: master
   GitHubDirectory:
     Type: String
     Description: /.github/workflows/
+    Default: /.github/workflows/
 
 Resources:
   MyS3Bucket:
@@ -105,8 +110,3 @@ Outputs:
   CloudFrontURL:
     Value: !Sub "http://${MyCloudFrontDistribution.DomainName}"
     Description: CloudFront URL
-
-
-
-
-
