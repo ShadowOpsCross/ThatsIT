@@ -21,12 +21,28 @@ Parameters:
     Type: String
     Description: /.github/workflows/
     Default: /.github/workflows/
+  StackName:
+    Type: String
+    Description: cloudfrontation
+    Default: cloudfrontation
 
 Resources:
   MyS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Ref BucketName
+      
+MyS3BucketRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: shadowbowlrole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: s3.amazonaws.com
+            Action: sts:AssumeRole
 
   MyBucketPolicy:
     Type: AWS::S3::BucketPolicy
