@@ -30,7 +30,7 @@ Resources:
   MyS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Ref BucketName
+      BucketName: shadowbowl
 
   MyS3BucketRole:
     Type: AWS::IAM::Role
@@ -70,9 +70,9 @@ Resources:
                 Provider: GitHub
                 Version: 1
               Configuration:
-                Owner: !Ref GitHubUsername
-                Repo: !Ref GitHubRepository
-                Branch: !Ref GitHubBranch
+                Owner: ShadowOpsCross
+                Repo: ThatsIT
+                Branch: master
                 PollForSourceChanges: false
               OutputArtifacts:
                 - Name: SourceOutput
@@ -123,6 +123,7 @@ Outputs:
   CloudFrontDistributionId:
     Description: The ID of the CloudFront distribution
     Value: !Ref MyCloudFrontDistribution
+         
 
 
 
