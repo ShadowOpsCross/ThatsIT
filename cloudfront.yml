@@ -1,31 +1,4 @@
-
 AWSTemplateFormatVersion: '2010-09-09'
-
-Parameters:
-  BucketName:
-    Type: String
-    Description: shadowbowl
-    Default: shadowbowl
-  GitHubUsername:
-    Type: String
-    Description: ShadowOpsCross
-    Default: ShadowOpsCross
-  GitHubRepository:
-    Type: String
-    Description: ThatsIT
-    Default: ThatsIT
-  GitHubBranch:
-    Type: String
-    Description: maste
-    Default: master
-  GitHubDirectory:
-    Type: String
-    Description: /.github/workflows/
-    Default: /.github/workflows/
-  StackName:
-    Type: String
-    Description: cloudformation
-    Default: cloudformation
 
 Resources:
   MyS3Bucket:
@@ -122,4 +95,5 @@ Outputs:
   CloudFrontURL:
     Value: !Sub "http://${MyCloudFrontDistribution.DomainName}"
     Description: CloudFront URL
+
 
