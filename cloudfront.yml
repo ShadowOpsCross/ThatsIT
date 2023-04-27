@@ -87,7 +87,7 @@ Resources:
         DefaultRootObject: index.html
         Origins:
           - Id: MyS3BucketOrigin
-            DomainName: !GetAtt [MyS3Bucket, RegionalDomainName]
+            DomainName: !Select [1, !Split ["/", !GetAtt MyS3Bucket.WebsiteURL]]
             S3OriginConfig:
               OriginAccessIdentity: ''
         DefaultCacheBehavior:
