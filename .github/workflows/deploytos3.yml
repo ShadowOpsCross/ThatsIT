@@ -27,14 +27,7 @@ jobs:
           --stack-name cloudfront \
           --template-file cloudfront.yml \
           --capabilities CAPABILITY_IAM \
-          --parameter-overrides \
-            BucketName=shadowbowl \
-            GitHubUsername=ShadowOpsCross \
-            GitHubRepository=ThatsIT \
-            GitHubBranch=master \
-            GitHubDirectory=/.github/workflows/ \
-            StackName=cloudformation
-
+          
               
 
 
