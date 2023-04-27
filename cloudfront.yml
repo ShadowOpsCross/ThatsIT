@@ -16,7 +16,7 @@ Parameters:
     Default: ThatsIT
   GitHubBranch:
     Type: String
-    Description: master
+    Description: maste
     Default: master
   GitHubDirectory:
     Type: String
