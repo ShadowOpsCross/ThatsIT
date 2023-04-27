@@ -16,7 +16,7 @@ Parameters:
     Default: ThatsIT
   GitHubBranch:
     Type: String
-    Description: maste
+    Description: master
     Default: master
   GitHubDirectory:
     Type: String
@@ -24,16 +24,16 @@ Parameters:
     Default: /.github/workflows/
   StackName:
     Type: String
-    Description: cloudfrontation
-    Default: cloudfrontation
+    Description: cloudformation
+    Default: cloudformation
 
 Resources:
   MyS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Ref BucketName
-      
-MyS3BucketRole:
+
+  MyS3BucketRole:
     Type: AWS::IAM::Role
     Properties:
       RoleName: shadowbowlrole
