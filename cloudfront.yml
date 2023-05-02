@@ -45,7 +45,7 @@ Resources:
             QueryString: false
             Cookies:
               Forward: none
-        Comment: CloudFront Distribution for my S3 bucket
+        Comment: CloudFront Distribution 
         ViewerCertificate:
           CloudFrontDefaultCertificate: true
         PriceClass: PriceClass_All
