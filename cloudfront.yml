@@ -3,7 +3,7 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: shadowbowl
-      
+
   MyBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
@@ -11,18 +11,16 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
+          - Sid: AllowPublicAccess
+            Effect: Allow
+            Principal: "*"
+            Action: s3:GetObject
+            Resource: !Join [ "", [ "arn:aws:s3:::", !Ref MyS3Bucket, "/*" ] ]
           - Sid: AllowPutBucketPolicy
             Effect: Allow
-            Principal:
-              AWS: "*"
-            Action: "s3:PutBucketPolicy"
+            Principal: "*"
+            Action: s3:PutBucketPolicy
             Resource: !Join [ "", [ "arn:aws:s3:::", !Ref MyS3Bucket ] ]
-          - Sid: AllowGetObject
-            Effect: Allow
-            Principal:
-              AWS: "*"
-            Action: "s3:GetObject"
-            Resource: !Join [ "", [ "arn:aws:s3:::", !Ref MyS3Bucket, "/*" ] ]
 
   MyCloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
@@ -42,7 +40,7 @@ Resources:
             QueryString: false
             Cookies:
               Forward: none
-        Comment: CloudFront Distribution +
+        Comment: CloudFront Distribution for my S3 bucket
         ViewerCertificate:
           CloudFrontDefaultCertificate: true
         PriceClass: PriceClass_All
