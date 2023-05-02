@@ -3,7 +3,7 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: shadowbowl
-      
+
   MyBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
@@ -40,6 +40,7 @@ Resources:
         ViewerCertificate:
           CloudFrontDefaultCertificate: true
         PriceClass: PriceClass_All
+
 
 
 
