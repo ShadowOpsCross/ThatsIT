@@ -14,13 +14,18 @@ Resources:
           - Sid: AllowPublicAccess
             Effect: Allow
             Principal: "*"
-            Action: s3:GetObject
-            Resource: !Join [ "", [ "arn:aws:s3:::", !Ref MyS3Bucket, "/*" ] ]
+            Action:
+              - s3:GetObject
+            Resource:
+              - !Join [ "", [ "arn:aws:s3:::", !Ref MyS3Bucket, "/*" ] ]
           - Sid: AllowPutBucketPolicy
             Effect: Allow
             Principal: "*"
-            Action: s3:PutBucketPolicy
-            Resource: !Join [ "", [ "arn:aws:s3:::", !Ref MyS3Bucket ] ]
+            Action:
+              - s3:PutBucketPolicy
+            Resource:
+              - !Join [ "", [ "arn:aws:s3:::", !Ref MyS3Bucket ] ]
+
 
   MyCloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
