@@ -1,129 +1,46 @@
-AWSTemplateFormatVersion: '2010-09-09'
-
-Parameters:
-  BucketName:
-    Type: String
-    Description: shadowbow
-    Default: shadowbowl
-  GitHubUsername:
-    Type: String
-    Description: ShadowOpsCross
-    Default: ShadowOpsCross
-  GitHubRepository:
-    Type: String
-    Description: ThatsIT
-    Default: ThatsIT
-  GitHubBranch:
-    Type: String
-    Description: master
-    Default: master
-  GitHubDirectory:
-    Type: String
-    Description: /.github/workflows/
-    Default: /.github/workflows/
-  StackName:
-    Type: String
-    Description: cloudformation
-    Default: cloudformation
-
 Resources:
   MyS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: shadowbowl
-
-  MyS3BucketRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: shadowbowlrole
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: s3.amazonaws.com
-            Action: sts:AssumeRole
-
+      
   MyBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
       Bucket: !Ref MyS3Bucket
       PolicyDocument:
+        Version: "2012-10-17"
         Statement:
-          - Sid: AllowPublicRead
+          - Sid: PublicReadGetObject
             Effect: Allow
-            Principal: '*'
-            Action: s3:GetObject
-            Resource: !Join [ '', ['arn:aws:s3:::', !Ref MyS3Bucket, '/*']]
-
-  MyCodePipeline:
-    Type: AWS::CodePipeline::Pipeline
-    Properties:
-      Name: MyCodePipeline
-      Stages:
-        - Name: Source
-          Actions:
-            - Name: GitHubSourceAction
-              ActionTypeId:
-                Category: Source
-                Owner: ThirdParty
-                Provider: GitHub
-                Version: 1
-              Configuration:
-                Owner: ShadowOpsCross
-                Repo: ThatsIT
-                Branch: master
-                PollForSourceChanges: false
-              OutputArtifacts:
-                - Name: SourceOutput
-              RunOrder: 1
-        - Name: Deploy
-          Actions:
-            - Name: S3DeployAction
-              ActionTypeId:
-                Category: Deploy
-                Owner: AWS
-                Provider: S3
-                Version: 1
-              Configuration:
-                BucketName: !Ref MyS3Bucket
-                Extract: 'true'
-                ObjectKey: index.html
-              InputArtifacts:
-                - Name: SourceOutput
-              RunOrder: 1
+            Principal: "*"
+            Action:
+              - s3:GetObject
+            Resource: !Join [ "", [ "arn:aws:s3:::", !Ref MyS3Bucket, "/*" ] ]
 
   MyCloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
-        Comment: CloudFront distribution for my website
-        Aliases:
-          - my-domain-name.example.com
-        DefaultRootObject: index.html
         Origins:
-          - Id: MyS3BucketOrigin
-            DomainName: !Select [1, !Split ["/", !GetAtt MyS3Bucket.WebsiteURL]]
+          - DomainName: !GetAtt MyS3Bucket.DomainName
+            Id: MyS3Origin
             S3OriginConfig:
               OriginAccessIdentity: ''
+        DefaultRootObject: index.html
+        Enabled: true
         DefaultCacheBehavior:
-          TargetOriginId: MyS3BucketOrigin
-          ViewerProtocolPolicy: allow-all
-        PriceClass: PriceClass_100
-        HttpVersion: http2
-        CustomErrorResponses:
-          - ErrorCode: 404
-            ResponseCode: 200
-            ResponsePagePath: /index.html
+          TargetOriginId: MyS3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+        Comment: CloudFront Distribution for my S3 bucket
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true
+        PriceClass: PriceClass_All
 
-Outputs:
-  S3BucketName:
-    Description: The name of the S3 bucket
-    Value: !Ref MyS3Bucket
-  CloudFrontDistributionId:
-    Description: The ID of the CloudFront distribution
-    Value: !Ref MyCloudFrontDistribution
-         
 
 
 
