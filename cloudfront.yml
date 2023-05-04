@@ -1,71 +1,99 @@
+AWSTemplateFormatVersion: '2010-09-09'
 Resources:
-  MyS3Bucket:
-    Type: AWS::S3::Bucket
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
     Properties:
       BucketName: shadowbowl
-      AccessControl: PublicRead
-
-  MyGitHubAction:
-    Type: AWS::CodeBuild::Project
+  S3BucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
     Properties:
-      Name: MyGitHubAction
-      Source:
-        Type: GITHUB
-        Location: https://github.com/ShadowOpsCross/ThatsIT
-        BuildSpec: |
-          version: 0.2
-          phases:
-            install:
-              runtime-versions:
-                python: 3.8
-            build:
-              commands:
-                - aws s3 cp /.github/workflows/index.html s3://shadowbowl/index.html
-      Artifacts:
-        Type: NO_ARTIFACTS
-
-  MyBucketPolicy:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket: !Ref MyS3Bucket
+      Bucket: !Ref S3Bucket
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Sid: PublicReadGetObject
             Effect: Allow
-            Principal: "*"
+            Principal: '*'
             Action:
-              - s3:GetObject
-            Resource:
-              - !Join [ "", [ "arn:aws:s3:::", !Ref MyS3Bucket, "/*" ] ]
-
-  MyCloudFrontDistribution:
-    Type: AWS::CloudFront::Distribution
+              - 's3:GetObject'
+            Resource: !Sub 'arn:aws:s3:::${S3Bucket}/*'
+  GitHubSource:
+    Type: 'AWS::CodeStarConnections::Connection'
+    Properties:
+      ConnectionName: GitHubConnection
+      ProviderType: GitHub
+      OwnerAccountId: !Ref AWS::AccountId
+      ConnectionStatus: AVAILABLE
+      AuthenticationType: PERSONAL_ACCESS_TOKEN
+      HostArn: 'arn:aws:codestar-connections:eu-central-1:476522543991:host/github.com'
+      ProviderEndpoint: 'https://api.github.com'
+      Tags:
+        - Key: Name
+          Value: GitHubConnection
+  GitHubLocation:
+    Type: 'AWS::CodeBuild::Project'
+    Properties:
+      Name: GitHubLocation
+      ServiceRole: !Ref CodeBuildServiceRole
+      Artifacts:
+        Type: NO_ARTIFACTS
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:4.0
+        EnvironmentVariables:
+          - Name: BUCKET_NAME
+            Value: !Ref S3Bucket
+          - Name: REPO_OWNER
+            Value: ShadowOpsCross
+          - Name: REPO_NAME
+            Value: ThatsIT
+          - Name: BRANCH
+            Value: master
+          - Name: DIRECTORY
+            Value: /.github/workflows/
+          - Name: FILE_NAME
+            Value: index.html
+      Source:
+        Type: GITHUB
+        Location: !Sub 'https://github.com/${ShadowOpsCross}/ThatsIT'
+      Tags:
+        - Key: Name
+          Value: GitHubLocation
+  CodeBuildServiceRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: CodeBuildServiceRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codebuild.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/AdministratorAccess'
+      Tags:
+        - Key: Name
+          Value: CodeBuildServiceRole
+  CloudFrontDistribution:
+    Type: 'AWS::CloudFront::Distribution'
     Properties:
       DistributionConfig:
         Origins:
-          - DomainName: !GetAtt MyS3Bucket.DomainName
+          - DomainName: !GetAtt S3Bucket.RegionalDomainName
             Id: MyS3Origin
             S3OriginConfig:
               OriginAccessIdentity: ''
-        DefaultRootObject: index.html
         Enabled: true
         DefaultCacheBehavior:
           TargetOriginId: MyS3Origin
-          ViewerProtocolPolicy: redirect-to-https
           ForwardedValues:
             QueryString: false
-            Cookies:
-              Forward: none
-        Comment: CloudFront Distribution for my S3 bucket
-        ViewerCertificate:
-          CloudFrontDefaultCertificate: true
-        PriceClass: PriceClass_All
+          ViewerProtocolPolicy: redirect-to-https
+        DefaultRootObject: index.html
 
-Outputs:
-  CloudFrontURL:
-    Description: URL of the CloudFront distribution
-    Value: !Sub "https://${MyCloudFrontDistribution.DomainName}"
 
 
 
