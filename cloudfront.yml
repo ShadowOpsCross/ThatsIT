@@ -1,9 +1,9 @@
-AWSTemplateFormatVersion: '2010-09-09'
 Resources:
   S3Bucket:
     Type: 'AWS::S3::Bucket'
     Properties:
       BucketName: shadowbowl
+
   S3BucketPolicy:
     Type: 'AWS::S3::BucketPolicy'
     Properties:
@@ -15,17 +15,8 @@ Resources:
             Effect: Allow
             Principal: '*'
             Action: 's3:GetObject'
-            Resource: !Sub 'arn:aws:s3:::shadowbowl
-  GitHubSource:
-    Type: 'Custom::GitHubSource'
-    Properties:
-      ServiceToken: !Sub 'arn:aws:lambda:eu-central-1:476522543991:function:custom-github-source'
-      RepoOwner: ShadowOpsCross
-      RepoName: ThatsIT
-      Branch: master
-      Directory: /.github/workflows/
-      FileName: index.html
-      BucketName: !Ref S3Bucket
+            Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]
+
   CloudFrontDistribution:
     Type: 'AWS::CloudFront::Distribution'
     Properties:
@@ -42,6 +33,21 @@ Resources:
             QueryString: false
           ViewerProtocolPolicy: redirect-to-https
         DefaultRootObject: index.html
+
+  S3BucketPolicyForCloudFront:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowCloudFrontAccess
+            Effect: Allow
+            Principal:
+              CanonicalUser: !GetAtt CloudFrontDistribution.OriginAccessIdentity.S3CanonicalUserId
+            Action: 's3:GetObject'
+            Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]
+
 
 
 
