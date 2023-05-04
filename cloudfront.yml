@@ -5,21 +5,6 @@ Resources:
       BucketName: shadowbowl
       AccessControl: PublicRead
 
-  MyBucketPolicy:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket: !Ref MyS3Bucket
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Sid: PublicReadGetObject
-            Effect: Allow
-            Principal: "*"
-            Action:
-              - s3:GetObject
-            Resource:
-              - !Join [ "", [ "arn:aws:s3:::", !Ref MyS3Bucket, "/*" ] ]
-
   MyGitHubAction:
     Type: AWS::CodeBuild::Project
     Properties:
@@ -35,9 +20,24 @@ Resources:
                 python: 3.8
             build:
               commands:
-                - aws s3 cp .github/workflows/index.html s3://shadowbowl/index.html
+                - aws s3 cp /.github/workflows/index.html s3://shadowbowl/index.html
       Artifacts:
         Type: NO_ARTIFACTS
+
+  MyBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref MyS3Bucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: PublicReadGetObject
+            Effect: Allow
+            Principal: "*"
+            Action:
+              - s3:GetObject
+            Resource:
+              - !Join [ "", [ "arn:aws:s3:::", !Ref MyS3Bucket, "/*" ] ]
 
   MyCloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
@@ -66,6 +66,7 @@ Outputs:
   CloudFrontURL:
     Description: URL of the CloudFront distribution
     Value: !Sub "https://${MyCloudFrontDistribution.DomainName}"
+
 
 
 
