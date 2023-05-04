@@ -24,7 +24,7 @@ jobs:
       - name: Deploy CloudFormation stack
         run: |
           aws cloudformation deploy \
-          --stack-name cloudfront \
+          --stack-name LINDEMANN \
           --template-file cloudfront.yml \
           --capabilities CAPABILITY_NAMED_IAM
           
