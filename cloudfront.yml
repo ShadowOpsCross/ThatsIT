@@ -14,69 +14,18 @@ Resources:
           - Sid: PublicReadGetObject
             Effect: Allow
             Principal: '*'
-            Action:
-              - 's3:GetObject'
-            Resource: !Sub 'arn:aws:s3:::${S3Bucket}/*'
+            Action: 's3:GetObject'
+            Resource: !Sub 'arn:aws:s3:::shadowbowl
   GitHubSource:
-    Type: 'AWS::CodeStarConnections::Connection'
+    Type: 'Custom::GitHubSource'
     Properties:
-      ConnectionName: GitHubConnection
-      ProviderType: GitHub
-      OwnerAccountId: !Ref AWS::AccountId
-      ConnectionStatus: AVAILABLE
-      AuthenticationType: PERSONAL_ACCESS_TOKEN
-      HostArn: 'arn:aws:codestar-connections:eu-central-1:476522543991:host/github.com'
-      ProviderEndpoint: 'https://api.github.com'
-      Tags:
-        - Key: Name
-          Value: GitHubConnection
-  GitHubLocation:
-    Type: 'AWS::CodeBuild::Project'
-    Properties:
-      Name: GitHubLocation
-      ServiceRole: !Ref CodeBuildServiceRole
-      Artifacts:
-        Type: NO_ARTIFACTS
-      Environment:
-        ComputeType: BUILD_GENERAL1_SMALL
-        Image: aws/codebuild/standard:4.0
-        EnvironmentVariables:
-          - Name: BUCKET_NAME
-            Value: !Ref S3Bucket
-          - Name: REPO_OWNER
-            Value: ShadowOpsCross
-          - Name: REPO_NAME
-            Value: ThatsIT
-          - Name: BRANCH
-            Value: master
-          - Name: DIRECTORY
-            Value: /.github/workflows/
-          - Name: FILE_NAME
-            Value: index.html
-      Source:
-        Type: GITHUB
-        Location: !Sub 'https://github.com/${ShadowOpsCross}/ThatsIT'
-      Tags:
-        - Key: Name
-          Value: GitHubLocation
-  CodeBuildServiceRole:
-    Type: 'AWS::IAM::Role'
-    Properties:
-      RoleName: CodeBuildServiceRole
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - codebuild.amazonaws.com
-            Action:
-              - 'sts:AssumeRole'
-      ManagedPolicyArns:
-        - 'arn:aws:iam::aws:policy/AdministratorAccess'
-      Tags:
-        - Key: Name
-          Value: CodeBuildServiceRole
+      ServiceToken: !Sub 'arn:aws:lambda:eu-central-1:476522543991:function:custom-github-source'
+      RepoOwner: ShadowOpsCross
+      RepoName: ThatsIT
+      Branch: master
+      Directory: /.github/workflows/
+      FileName: index.html
+      BucketName: !Ref S3Bucket
   CloudFrontDistribution:
     Type: 'AWS::CloudFront::Distribution'
     Properties:
@@ -93,6 +42,7 @@ Resources:
             QueryString: false
           ViewerProtocolPolicy: redirect-to-https
         DefaultRootObject: index.html
+
 
 
 
