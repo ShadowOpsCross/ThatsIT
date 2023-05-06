@@ -12,7 +12,6 @@ Resources:
 
 
 
-
   CloudFrontDistribution:
     Type: 'AWS::CloudFront::Distribution'
     Properties:
@@ -30,39 +29,7 @@ Resources:
           ViewerProtocolPolicy: redirect-to-https
         DefaultRootObject: index.html
 
-  S3BucketPolicyForCloudFront:
-    Type: 'AWS::S3::BucketPolicy'
-    Properties:
-      Bucket: !Ref S3Bucket
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Sid: AllowCloudFrontAccess
-            Effect: Allow
-            Principal:
-              CanonicalUser: !GetAtt CloudFrontDistribution.OriginAccessIdentity.S3CanonicalUserId
-            Action: 's3:GetObject'
-            Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]
-            Condition:
-              StringEquals:
-                'aws:Referer': !Sub "https://*.${AWS::Region}.amazonaws.com/*"
-          - Sid: AllowCloudFrontAccess2
-            Effect: Allow
-            Principal:
-              AWS: '*'
-            Action: 's3:GetObject'
-            Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]
-            Condition:
-              IpAddress:
-                aws:SourceIp:
-                  - '54.230.0.0/16'
-                  - '54.239.128.0/18'
-                  - '54.182.0.0/16'
-                  - '204.246.164.0/22'
-                  - '204.246.168.0/22'
-              StringEquals:
-                'aws:Referer': !Sub "https://${CloudFrontDistribution}.cloudfront.net/*"
-
+ 
 
 
 
