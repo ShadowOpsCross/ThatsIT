@@ -4,6 +4,12 @@ Resources:
     Properties:
       BucketName: shadowbowl
 
+  CloudFrontOriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: 'My CloudFront OAID'
+
   S3BucketPolicy:
     Type: 'AWS::S3::BucketPolicy'
     Properties:
@@ -15,7 +21,7 @@ Resources:
             Effect: Allow
             Principal: '*'
             Action: 's3:GetObject'
-            Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]
+            Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]    
 
   CloudFrontDistribution:
     Type: 'AWS::CloudFront::Distribution'
@@ -25,7 +31,7 @@ Resources:
           - DomainName: !GetAtt S3Bucket.RegionalDomainName
             Id: MyS3Origin
             S3OriginConfig:
-              OriginAccessIdentity: ''
+              OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}"
         Enabled: true
         DefaultCacheBehavior:
           TargetOriginId: MyS3Origin
@@ -47,6 +53,26 @@ Resources:
               CanonicalUser: !GetAtt CloudFrontDistribution.OriginAccessIdentity.S3CanonicalUserId
             Action: 's3:GetObject'
             Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]
+            Condition:
+              StringEquals:
+                'aws:Referer': !Sub "https://*.${AWS::Region}.amazonaws.com/*"
+          - Sid: AllowCloudFrontAccess2
+            Effect: Allow
+            Principal:
+              AWS: '*'
+            Action: 's3:GetObject'
+            Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]
+            Condition:
+              IpAddress:
+                aws:SourceIp:
+                  - '54.230.0.0/16'
+                  - '54.239.128.0/18'
+                  - '54.182.0.0/16'
+                  - '204.246.164.0/22'
+                  - '204.246.168.0/22'
+              StringEquals:
+                'aws:Referer': !Sub "https://${CloudFrontDistribution}.cloudfront.net/*"
+
 
 
 
