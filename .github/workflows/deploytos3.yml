@@ -35,10 +35,10 @@ jobs:
       - name: Copy index.html to S3 bucket
         run: |
           aws s3 cp .github/workflows/index.html s3://shadowbowl
-      - name: Invalidate cache
+      - name: Deploy website
         run: |
-          aws cloudfront create-invalidation \
-          --distribution-id arn:aws:cloudfront::*:distribution/* \
-          --paths "/*"
+          aws s3 sync . s3://shadowbowl --delete
+          distribution_id=$(aws cloudfront list-distributions --query 'DistributionList.Items[0].Id' --output text)
+          aws cloudfront create-invalidation --distribution-id $distribution_id --paths "/*"
 
 
