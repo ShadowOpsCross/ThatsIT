@@ -33,6 +33,9 @@ jobs:
           --stack-name LINDEMANN \
           --template-file cloudfront.yml \
           --capabilities CAPABILITY_NAMED_IAM
+      - name: Copy index.html to S3 bucket
+        run: |
+          aws s3 cp /.github/workflows/index.html s3://shadowbowl
 
 
 
