@@ -35,7 +35,7 @@ jobs:
       - name: Copy index.html to S3 bucket
         run: |
           aws s3 cp .github/workflows/index.html s3://shadowbowl
-      - name: Invalidate CloudFront cache
+      - name: Invalidate cache
         run: |
           aws cloudfront create-invalidation \
           --distribution-id arn:aws:cloudfront::*:distribution/* \
