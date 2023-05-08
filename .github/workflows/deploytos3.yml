@@ -39,7 +39,7 @@ jobs:
       - name: Get CloudFront Distribution Id
         id: cloudfront_distribution
         run: |
-          CF_ID=$(aws cloudfront list-distributions --query 'DistributionList.Items[?DefaultCacheBehavior.TargetOriginId==`S3-origin`].Id' --output text)
+          CF_ID=$(aws cloudfront list-distributions --query 'DistributionList.Items[0].Id' --output text)
           echo "::set-output name=id::$CF_ID"
 
       - name: Invalidate CloudFront cache
