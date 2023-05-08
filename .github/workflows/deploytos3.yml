@@ -43,12 +43,14 @@ jobs:
           echo "::set-output name=id::$CF_ID"
 
       - name: Invalidate CloudFront cache
+        env:
+          DISTRIBUTION_ID: ""
         run: |
-          CF_ID="${{ steps.cloudfront_distribution.outputs.id }}"
+          DISTRIBUTION_ID=$(aws cloudfront list-distributions --query 'DistributionList.Items[0].Id' --output text)
+          echo "DISTRIBUTION_ID=$DISTRIBUTION_ID" >> $GITHUB_ENV
           aws cloudfront create-invalidation \
-          --distribution-id "$CF_ID" \
-          --paths "/*"
-          
+            --distribution-id "$DISTRIBUTION_ID" \
+            --paths "/*"
     
           
           
