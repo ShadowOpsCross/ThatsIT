@@ -41,6 +41,9 @@ jobs:
         run: |
           CF_ID=$(aws cloudfront list-distributions --query 'DistributionList.Items[0].Id' --output text)
           echo "::set-output name=id::$CF_ID"
+          
+      - name: Wait for cache to be created
+        run: sleep 60
 
       - name: Invalidate CloudFront cache
         env:
