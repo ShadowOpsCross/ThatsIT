@@ -36,20 +36,19 @@ jobs:
         run: |
           aws s3 cp .github/workflows/index.html s3://shadowbowl
           
-      - name: Get CloudFront distribution ID
-        id: cloudfront_id
+      - name: Get CloudFront Distribution Id
+        id: cloudfront_distribution
         run: |
-          distribution_id=$(aws cloudformation describe-stacks \
-            --stack-name LINDEMANN \
-            --query "Stacks[0].Outputs[?OutputKey=='DistributionId'].OutputValue" \
-            --output text)
-          echo "::set-output name=distribution_id::$distribution_id"
+          CF_ID=$(aws cloudfront list-distributions --query 'DistributionList.Items[?Aliases.Items[0]==`example.com`].Id' --output text)
+          echo "::set-output name=id::$CF_ID"
 
       - name: Invalidate CloudFront cache
         run: |
-          distribution_id=${{ steps.cloudfront_id.outputs.distribution_id }}
+          CF_ID="${{ steps.cloudfront_distribution.outputs.id }}"
           aws cloudfront create-invalidation \
-            --distribution-id $distribution_id \
-            --paths "/*"
- 
-
+          --distribution-id "$CF_ID" \
+          --paths "/*"
+          
+          
+          
+          
