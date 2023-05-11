@@ -26,3 +26,4 @@ jobs:
           --stack-name LINDEMANN \
           --template-file cloudfront.yml \
           --capabilities CAPABILITY_NAMED_IAM
+
