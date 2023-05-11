@@ -1,4 +1,3 @@
 /cloudfront.yml
 /.github
-deploytos3.yml
-/.github/workflows/deploytos3.yml
+
