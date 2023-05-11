@@ -1,1 +1,32 @@
-gggg
+Resources:
+  MyCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: Livero
+  ContainerInstances:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0c94855ba95c71c99  # Amazon Linux 2 AMI
+      InstanceType: t2.micro
+      KeyName: deployfromgithub
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: 'true'
+          DeviceIndex: '0'
+          GroupSet:
+            - Ref: InstanceSecurityGroup
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          echo ECS_CLUSTER=${MyCluster} >> /etc/ecs/ecs.config
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for instances
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+Outputs:
+  MyClusterArn:
+    Value: !GetAtt MyCluster.Arn
