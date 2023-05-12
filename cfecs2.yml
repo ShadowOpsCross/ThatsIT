@@ -1,19 +1,23 @@
 Resources:
-  Service1:
+  MyCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: livero
+  MyService1:
     Type: AWS::ECS::Service
     Properties:
-      Cluster: !Ref Livero
+      Cluster: !Ref MyCluster
       DesiredCount: 1
       LaunchType: EC2
-      TaskDefinition: !Ref ecsproj
-  Service2:
+      TaskDefinition: !Ref MyTaskDefinition1
+  MyService2:
     Type: AWS::ECS::Service
     Properties:
-      Cluster: !Ref Livero
+      Cluster: !Ref MyCluster
       DesiredCount: 1
       LaunchType: EC2
-      TaskDefinition: !Ref ecsproj2
-  TaskDefinition1:
+      TaskDefinition: !Ref MyTaskDefinition2
+  MyTaskDefinition1:
     Type: AWS::ECS::TaskDefinition
     Properties:
       ContainerDefinitions:
@@ -25,7 +29,7 @@ Resources:
       Cpu: '256'
       Memory: '512'
       Family: justaskfamily1
-  TaskDefinition2:
+  MyTaskDefinition2:
     Type: AWS::ECS::TaskDefinition
     Properties:
       ContainerDefinitions:
@@ -38,7 +42,8 @@ Resources:
       Memory: '512'
       Family: justaskfamily2
 Outputs:
-  Service1Endpoint:
-    Value: !Join ['', ['http://', !GetAtt Service1.LoadBalancers[0].DNSName]]
-  Service2Endpoint:
-    Value: !Join ['', ['http://', !GetAtt Service2.LoadBalancers[0].DNSName]]
+  MyService1Endpoint:
+    Value: !Join ['', ['http://', !GetAtt MyService1.LoadBalancers[0].DNSName]]
+  MyService2Endpoint:
+    Value: !Join ['', ['http://', !GetAtt MyService2.LoadBalancers[0].DNSName]]
+
