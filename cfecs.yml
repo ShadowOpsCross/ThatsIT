@@ -4,7 +4,7 @@ Resources:
     Properties:
       CidrBlock: 10.0.0.0/16
 
-  MySubnet:
+  Subnet:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
