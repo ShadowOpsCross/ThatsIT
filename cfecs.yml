@@ -3,6 +3,18 @@ Resources:
     Type: AWS::ECS::Cluster
     Properties:
       ClusterName: Livero
+      
+      
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for instances
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          
   ContainerInstances:
     Type: AWS::EC2::Instance
     Properties:
@@ -18,15 +30,7 @@ Resources:
         Fn::Base64: !Sub |
           #!/bin/bash
           echo ECS_CLUSTER=${MyCluster} >> /etc/ecs/ecs.config
-  InstanceSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Security group for instances
-      SecurityGroupIngress:
-        - CidrIp: 0.0.0.0/0
-          IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
+  
 Outputs:
   MyClusterArn:
     Value: !GetAtt MyCluster.Arn
