@@ -1,23 +1,23 @@
 Resources:
-  MyService1:
+  Service1:
     Type: AWS::ECS::Service
     Properties:
       Cluster: !Ref Livero
       DesiredCount: 1
       LaunchType: EC2
       TaskDefinition: !Ref ecsproj
-  MyService2:
+  Service2:
     Type: AWS::ECS::Service
     Properties:
       Cluster: !Ref Livero
       DesiredCount: 1
       LaunchType: EC2
       TaskDefinition: !Ref ecsproj2
-  MyTaskDefinition1:
+  TaskDefinition1:
     Type: AWS::ECS::TaskDefinition
     Properties:
       ContainerDefinitions:
-        - Name: node1
+        - Name: nodi1
           Image: nginx:latest
           PortMappings:
             - ContainerPort: 80
@@ -25,11 +25,11 @@ Resources:
       Cpu: '256'
       Memory: '512'
       Family: justaskfamily1
-  MyTaskDefinition2:
+  TaskDefinition2:
     Type: AWS::ECS::TaskDefinition
     Properties:
       ContainerDefinitions:
-        - Name: node2
+        - Name: nodi2
           Image: nginx:latest
           PortMappings:
             - ContainerPort: 80
@@ -38,7 +38,7 @@ Resources:
       Memory: '512'
       Family: justaskfamily2
 Outputs:
-  MyService1Endpoint:
-    Value: !Join ['', ['http://', !GetAtt Justservice1.LoadBalancers[0].DNSName]]
-  MyService2Endpoint:
-    Value: !Join ['', ['http://', !GetAtt Justservice2.LoadBalancers[0].DNSName]]
+  Service1Endpoint:
+    Value: !Join ['', ['http://', !GetAtt Service1.LoadBalancers[0].DNSName]]
+  Service2Endpoint:
+    Value: !Join ['', ['http://', !GetAtt Service2.LoadBalancers[0].DNSName]]
