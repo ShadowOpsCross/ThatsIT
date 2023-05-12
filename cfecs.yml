@@ -65,3 +65,5 @@ Outputs:
   InstancePublicIp:
     Value: !GetAtt Instance.PublicIp
 
+
+
