@@ -6,7 +6,7 @@ Resources:
   ContainerInstances:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-0c94855ba95c71c99  # Amazon Linux 2 AMI
+      ImageId: ami-03aefa83246f44ef2 
       InstanceType: t2.micro
       KeyName: deployfromgithub
       NetworkInterfaces:
