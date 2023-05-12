@@ -1,11 +1,44 @@
 Resources:
-  MyCluster:
-    Type: AWS::ECS::Cluster
+  VPC:
+    Type: AWS::EC2::VPC
     Properties:
-      ClusterName: Livero
-      
-      
-  InstanceSecurityGroup:
+      CidrBlock: 10.0.0.0/16
+
+  MySubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.0.0/24
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+
+  Route:
+    Type: AWS::EC2::Route
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref RouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  SubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref Subnet
+      RouteTableId: !Ref RouteTable
+
+  SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security group for instances
@@ -14,8 +47,8 @@ Resources:
           IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          
-  ContainerInstances:
+
+  Instance:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: ami-03aefa83246f44ef2 
@@ -25,12 +58,10 @@ Resources:
         - AssociatePublicIpAddress: 'true'
           DeviceIndex: '0'
           GroupSet:
-            - Ref: InstanceSecurityGroup
-      UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash
-          echo ECS_CLUSTER=${MyCluster} >> /etc/ecs/ecs.config
-  
+            - Ref: SecurityGroup
+          SubnetId: !Ref Subnet
+
 Outputs:
-  MyClusterArn:
-    Value: !GetAtt MyCluster.Arn
+  InstancePublicIp:
+    Value: !GetAtt Instance.PublicIp
+
