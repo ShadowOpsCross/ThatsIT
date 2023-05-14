@@ -41,10 +41,6 @@ Resources:
       Cpu: '256'
       Memory: '512'
       Family: justaskfamily2
-Outputs:
-  Service1Endpoint:
-    Value: !Join ['', ['http://', !GetAtt Service1.LoadBalancers{{0}}.DNSName]]
-  Service2Endpoint:
-    Value: !Join ['', ['http://', !GetAtt Service2.LoadBalancers{{0}}.DNSName]]
+
 
 
