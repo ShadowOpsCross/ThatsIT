@@ -1,46 +1,70 @@
 Resources:
+  TaskDefinition:
+    Type: "AWS::ECS::TaskDefinition"
+    Properties:
+      ContainerDefinitions:
+        - Name: "web"
+          Image: "nginx"
+          PortMappings:
+            - ContainerPort: 80
+          Memory: 512
+          Cpu: 256
+      Family: "justfamily"
+      NetworkMode: "bridge"
+      RequiresCompatibilities:
+        - "EC2"
   Cluster:
-    Type: AWS::ECS::Cluster
-    Properties:
-      ClusterName: livero
+    Type: "AWS::ECS::Cluster"
   Service1:
-    Type: AWS::ECS::Service
+    Type: "AWS::ECS::Service"
     Properties:
       Cluster: !Ref Cluster
       DesiredCount: 1
-      LaunchType: EC2
-      TaskDefinition: !Ref TaskDefinition1
+      TaskDefinition: !Ref TaskDefinition
+      LaunchType: "EC2"
+      LoadBalancers:
+        - ContainerName: "web"
+          ContainerPort: 80
+          TargetGroupArn: !Ref TargetGroup1
+      PlacementStrategies:
+        - Type: "random"
+      PlacementConstraints:
+        - Type: "distinctInstance"
+      SchedulingStrategy: "REPLICA"
   Service2:
-    Type: AWS::ECS::Service
+    Type: "AWS::ECS::Service"
     Properties:
       Cluster: !Ref Cluster
       DesiredCount: 1
-      LaunchType: EC2
-      TaskDefinition: !Ref TaskDefinition2
-  TaskDefinition1:
-    Type: AWS::ECS::TaskDefinition
+      TaskDefinition: !Ref TaskDefinition
+      LaunchType: "EC2"
+      LoadBalancers:
+        - ContainerName: "web"
+          ContainerPort: 80
+          TargetGroupArn: !Ref TargetGroup2
+      PlacementStrategies:
+        - Type: "random"
+      PlacementConstraints:
+        - Type: "distinctInstance"
+      SchedulingStrategy: "REPLICA"
+  TargetGroup1:
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
     Properties:
-      ContainerDefinitions:
-        - Name: nodi1
-          Image: nginx:latest
-          PortMappings:
-            - ContainerPort: 80
-              HostPort: 80
-      Cpu: '256'
-      Memory: '512'
-      Family: justaskfamily1
-  TaskDefinition2:
-    Type: AWS::ECS::TaskDefinition
+      Name: "target-group-1"
+      Port: 80
+      Protocol: "HTTP"
+      TargetType: "ip"
+      VpcId: !Ref VPC
+  TargetGroup2:
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
     Properties:
-      ContainerDefinitions:
-        - Name: nodi2
-          Image: nginx:latest
-          PortMappings:
-            - ContainerPort: 80
-              HostPort: 80
-      Cpu: '256'
-      Memory: '512'
-      Family: justaskfamily2
+      Name: "target-group-2"
+      Port: 80
+      Protocol: "HTTP"
+      TargetType: "ip"
+      VpcId: !Ref VPC
+
+
 
 
 
