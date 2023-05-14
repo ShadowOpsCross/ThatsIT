@@ -43,7 +43,8 @@ Resources:
       Family: justaskfamily2
 Outputs:
   MyService1Endpoint:
-    Value: !Join ['', ['http://', !GetAtt MyService1.LoadBalancers[0].DNSName]]
+    Value: !Join ['', ['http://', !GetAtt MyService1.LoadBalancers{{0}}.DNSName]]
   MyService2Endpoint:
-    Value: !Join ['', ['http://', !GetAtt MyService2.LoadBalancers[0].DNSName]]
+    Value: !Join ['', ['http://', !GetAtt MyService2.LoadBalancers{{0}}.DNSName]]
+
 
