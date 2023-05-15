@@ -7,7 +7,7 @@ Resources:
           Image: "nginx"
           PortMappings:
             - ContainerPort: 80
-          Memory: 0.5GB
+          Memory: 512
           Cpu: 256
       Family: "justfamily1"
       NetworkMode: "bridge"
@@ -20,7 +20,7 @@ Resources:
       ContainerDefinitions:
         - Name: "simple-task"
           Image: "hello-world"
-          Memory: 0.5GB
+          Memory: 512
           Cpu: 256
       Family: "justfamily2"
       NetworkMode: "bridge"
@@ -47,3 +47,4 @@ Resources:
       TaskDefinition: !Ref TaskDefinition2
       LaunchType: "EC2"
       SchedulingStrategy: "REPLICA"
+
