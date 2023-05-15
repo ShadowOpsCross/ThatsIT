@@ -1,5 +1,5 @@
 Resources:
-  TaskDefinition:
+  TaskDefinition1:
     Type: "AWS::ECS::TaskDefinition"
     Properties:
       ContainerDefinitions:
@@ -7,64 +7,43 @@ Resources:
           Image: "nginx"
           PortMappings:
             - ContainerPort: 80
-          Memory: 512
+          Memory: 0.5GB
           Cpu: 256
-      Family: "justfamily"
+      Family: "justfamily1"
       NetworkMode: "bridge"
       RequiresCompatibilities:
         - "EC2"
+
+  TaskDefinition2:
+    Type: "AWS::ECS::TaskDefinition"
+    Properties:
+      ContainerDefinitions:
+        - Name: "simple-task"
+          Image: "hello-world"
+          Memory: 0.5GB
+          Cpu: 256
+      Family: "justfamily2"
+      NetworkMode: "bridge"
+      RequiresCompatibilities:
+        - "EC2"
+
   Cluster:
     Type: "AWS::ECS::Cluster"
+
   Service1:
     Type: "AWS::ECS::Service"
     Properties:
       Cluster: !Ref Cluster
       DesiredCount: 1
-      TaskDefinition: !Ref TaskDefinition
+      TaskDefinition: !Ref TaskDefinition1
       LaunchType: "EC2"
-      LoadBalancers:
-        - ContainerName: "web"
-          ContainerPort: 80
-          TargetGroupArn: !Ref TargetGroup1
-      PlacementStrategies:
-        - Type: "random"
-      PlacementConstraints:
-        - Type: "distinctInstance"
       SchedulingStrategy: "REPLICA"
+
   Service2:
     Type: "AWS::ECS::Service"
     Properties:
       Cluster: !Ref Cluster
       DesiredCount: 1
-      TaskDefinition: !Ref TaskDefinition
+      TaskDefinition: !Ref TaskDefinition2
       LaunchType: "EC2"
-      LoadBalancers:
-        - ContainerName: "web"
-          ContainerPort: 80
-          TargetGroupArn: !Ref TargetGroup2
-      PlacementStrategies:
-        - Type: "random"
-      PlacementConstraints:
-        - Type: "distinctInstance"
       SchedulingStrategy: "REPLICA"
-  TargetGroup1:
-    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
-    Properties:
-      Name: "target-group-1"
-      Port: 80
-      Protocol: "HTTP"
-      TargetType: "ip"
-      VpcId: !Ref VPC
-  TargetGroup2:
-    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
-    Properties:
-      Name: "target-group-2"
-      Port: 80
-      Protocol: "HTTP"
-      TargetType: "ip"
-      VpcId: !Ref VPC
-
-
-
-
-
