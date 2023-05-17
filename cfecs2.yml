@@ -1,4 +1,7 @@
 Resources:
+  Cluster:
+    Type: "AWS::ECS::Cluster"
+
   TaskDefinition1:
     Type: "AWS::ECS::TaskDefinition"
     Properties:
@@ -27,9 +30,6 @@ Resources:
       RequiresCompatibilities:
         - "EC2"
 
-  Cluster:
-    Type: "AWS::ECS::Cluster"
-
   Service1:
     Type: "AWS::ECS::Service"
     Properties:
@@ -47,6 +47,9 @@ Resources:
       TaskDefinition: !Ref TaskDefinition2
       LaunchType: "EC2"
       SchedulingStrategy: "REPLICA"
+
+
+
       
       
 
