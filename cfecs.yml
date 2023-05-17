@@ -11,6 +11,7 @@ Resources:
           #!/bin/bash
           echo "Hello, World!" > index.html
           nohup python -m SimpleHTTPServer 80 &
+
   EC2Instance2:
     Type: AWS::EC2::Instance
     Properties:
