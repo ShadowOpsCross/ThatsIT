@@ -34,7 +34,9 @@
 
   Service1:
     Type: "AWS::ECS::Service"
-    DependsOn: EC2Instance1
+    DependsOn:
+      - EC2Instance1
+      - EC2Instance2
     Properties:
       Cluster: !Ref ECSCluster
       DesiredCount: 1
@@ -44,7 +46,9 @@
 
   Service2:
     Type: "AWS::ECS::Service"
-    DependsOn: EC2Instance2
+    DependsOn:
+      - EC2Instance1
+      - EC2Instance2
     Properties:
       Cluster: !Ref ECSCluster
       DesiredCount: 1
