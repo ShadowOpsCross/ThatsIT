@@ -1,41 +1,55 @@
-Resources:
-  InstanceSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
+ Resources:
+  ECSCluster:
+    Type: AWS::ECS::Cluster
     Properties:
-      GroupDescription: Allow HTTP access
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 0.0.0.0/0
+      ClusterName: "DeepLearnProject"
 
-  EC2Instance1:
-    Type: AWS::EC2::Instance
+  TaskDefinition1:
+    Type: "AWS::ECS::TaskDefinition"
     Properties:
-      ImageId: ami-03aefa83246f44ef2
-      InstanceType: t2.micro
-      SecurityGroupIds:
-        - !Ref InstanceSecurityGroup
-      UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash
-          echo "Hello, World!" > index.html
-          nohup python -m SimpleHTTPServer 80 &
-    DependsOn: ECSCluster
+      ContainerDefinitions:
+        - Name: "web"
+          Image: "nginx"
+          PortMappings:
+            - ContainerPort: 80
+          Memory: 512
+          Cpu: 256
+      Family: "justfamily1"
+      NetworkMode: "bridge"
+      RequiresCompatibilities:
+        - "EC2"
 
-  EC2Instance2:
-    Type: AWS::EC2::Instance
+  TaskDefinition2:
+    Type: "AWS::ECS::TaskDefinition"
     Properties:
-      ImageId: ami-03aefa83246f44ef2
-      InstanceType: t2.micro
-      SecurityGroupIds:
-        - !Ref InstanceSecurityGroup
-      UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash
-          echo "Hello, World!" > index.html
-          nohup python -m SimpleHTTPServer 80 &
-    DependsOn: ECSCluster
+      ContainerDefinitions:
+        - Name: "simple-task"
+          Image: "hello-world"
+          Memory: 512
+          Cpu: 256
+      Family: "justfamily2"
+      NetworkMode: "bridge"
+      RequiresCompatibilities:
+        - "EC2"
+
+  Service1:
+    Type: "AWS::ECS::Service"
+    Properties:
+      Cluster: !Ref ECSCluster
+      DesiredCount: 1
+      TaskDefinition: !Ref TaskDefinition1
+      LaunchType: "EC2"
+      SchedulingStrategy: "REPLICA"
+
+  Service2:
+    Type: "AWS::ECS::Service"
+    Properties:
+      Cluster: !Ref ECSCluster
+      DesiredCount: 1
+      TaskDefinition: !Ref TaskDefinition2
+      LaunchType: "EC2"
+      SchedulingStrategy: "REPLICA"
+
 
 
 
