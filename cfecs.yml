@@ -1,4 +1,4 @@
-Resources:   
+Resources:
   InstanceSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -34,18 +34,7 @@ Resources:
           #!/bin/bash
           echo "Hello, World!" > index.html
           nohup python -m SimpleHTTPServer 80 &
-      
-      
-      
-  ECSCluster:
-   Type: AWS::ECS::Cluster
-   Properties:
-     ClusterName: "DeepLearnProject"
-          
-   
 
-
-    
     
     
     
