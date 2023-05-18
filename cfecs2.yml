@@ -1,4 +1,9 @@
 Resources:
+  ECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: "DeepLearnProject"
+
   TaskDefinition1:
     Type: "AWS::ECS::TaskDefinition"
     Properties:
@@ -35,9 +40,9 @@ Resources:
       TaskDefinition: !Ref TaskDefinition1
       LaunchType: "EC2"
       SchedulingStrategy: "REPLICA"
-      PlacementConstraints:
-        - Type: "memberOf"
-          Expression: "!attribute:ecs.instance-type =~ t2.micro"
+      DependsOn:
+        - EC2Instance1
+        - EC2Instance2
 
   Service2:
     Type: "AWS::ECS::Service"
@@ -47,10 +52,9 @@ Resources:
       TaskDefinition: !Ref TaskDefinition2
       LaunchType: "EC2"
       SchedulingStrategy: "REPLICA"
-      PlacementConstraints:
-        - Type: "memberOf"
-          Expression: "!attribute:ecs.instance-type =~ t2.micro"
-
+      DependsOn:
+        - EC2Instance1
+        - EC2Instance2
 
 
 
