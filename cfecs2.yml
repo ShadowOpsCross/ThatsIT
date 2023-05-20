@@ -5,7 +5,7 @@ Resources:
       ClusterName: "DeepLearnProject"
 
   TaskDefinition1:
-    Type: "AWS::ECS::TaskDefinition"
+    Type: AWS::ECS::TaskDefinition
     Properties:
       ContainerDefinitions:
         - Name: "web"
@@ -20,7 +20,7 @@ Resources:
         - "EC2"
 
   TaskDefinition2:
-    Type: "AWS::ECS::TaskDefinition"
+    Type: AWS::ECS::TaskDefinition
     Properties:
       ContainerDefinitions:
         - Name: "simple-task"
@@ -33,32 +33,23 @@ Resources:
         - "EC2"
 
   Service1:
-    Type: "AWS::ECS::Service"
+    Type: AWS::ECS::Service
     Properties:
       Cluster: !Ref ECSCluster
       DesiredCount: 1
       TaskDefinition: !Ref TaskDefinition1
       LaunchType: "EC2"
       SchedulingStrategy: "REPLICA"
-      DependsOn:
-        - EC2Instance1
-        - EC2Instance2
 
   Service2:
-    Type: "AWS::ECS::Service"
+    Type: AWS::ECS::Service
     Properties:
       Cluster: !Ref ECSCluster
       DesiredCount: 1
       TaskDefinition: !Ref TaskDefinition2
       LaunchType: "EC2"
       SchedulingStrategy: "REPLICA"
-      DependsOn:
-        - EC2Instance1
-        - EC2Instance2
 
-Outputs:
-  ECSClusterOutput:
-    Value: !Ref ECSCluster
 
 
 
