@@ -21,9 +21,6 @@ Resources:
           #!/bin/bash
           echo "Hello, World!" > index.html
           nohup python -m SimpleHTTPServer 80 &
-      Tags:
-        - Key: Name
-          Value: EC2Instance1
 
   EC2Instance2:
     Type: AWS::EC2::Instance
@@ -37,9 +34,6 @@ Resources:
           #!/bin/bash
           echo "Hello, World!" > index.html
           nohup python -m SimpleHTTPServer 80 &
-      Tags:
-        - Key: Name
-          Value: EC2Instance2
 
 
     
