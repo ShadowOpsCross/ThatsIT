@@ -76,9 +76,6 @@ Resources:
       TaskDefinition: !Ref TaskDefinition1
       LaunchType: "EC2"
       SchedulingStrategy: "REPLICA"
-      DependsOn:
-        - EC2Instance1
-        - EC2Instance2
 
   Service2:
     Type: "AWS::ECS::Service"
@@ -88,6 +85,4 @@ Resources:
       TaskDefinition: !Ref TaskDefinition2
       LaunchType: "EC2"
       SchedulingStrategy: "REPLICA"
-      DependsOn:
-        - EC2Instance1
-        - EC2Instance2
+
