@@ -1,8 +1,6 @@
 Resources:
-  ECSCluster:
+  Cluster:
     Type: AWS::ECS::Cluster
-    Properties:
-      ClusterName: "DeepLearnProject"
 
   TaskDefinition1:
     Type: AWS::ECS::TaskDefinition
@@ -35,11 +33,17 @@ Resources:
   Service1:
     Type: AWS::ECS::Service
     Properties:
-      Cluster: !Ref ECSCluster
-      DesiredCount: 1
+      Cluster: !Ref Cluster
       TaskDefinition: !Ref TaskDefinition1
-      LaunchType: "EC2"
-      SchedulingStrategy: "REPLICA"
+      DesiredCount: 1
+
+  Service2:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster: !Ref Cluster
+      TaskDefinition: !Ref TaskDefinition2
+      DesiredCount: 1
+
 
   Service2:
     Type: AWS::ECS::Service
