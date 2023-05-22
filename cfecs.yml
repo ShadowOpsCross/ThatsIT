@@ -1,14 +1,4 @@
 Resources:
-  InstanceSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Allow HTTP access
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 0.0.0.0/0
-
   EC2Instance1:
     Type: AWS::EC2::Instance
     Properties:
@@ -16,12 +6,6 @@ Resources:
       InstanceType: t2.micro
       SecurityGroupIds:
         - !Ref InstanceSecurityGroup
-      UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash
-          echo "Instance 1 is ready!" > index.html
-          nohup python -m SimpleHTTPServer 80 &
-
   EC2Instance2:
     Type: AWS::EC2::Instance
     Properties:
@@ -29,11 +13,18 @@ Resources:
       InstanceType: t2.micro
       SecurityGroupIds:
         - !Ref InstanceSecurityGroup
-      UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash
-          echo "Instance 2 is ready!" > index.html
-          nohup python -m SimpleHTTPServer 80 &
+
+Resources:
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Instance Security Group"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
 
 
     
