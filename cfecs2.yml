@@ -1,6 +1,8 @@
 Resources:
-  Cluster:
+  ECSCluster:
     Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: "DeepLearnProject"
 
   TaskDefinition1:
     Type: AWS::ECS::TaskDefinition
