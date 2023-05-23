@@ -2,8 +2,12 @@ Resources:
   InstanceSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Allow HTTP access
+      GroupDescription: "Instance Security Group"
       SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
@@ -35,10 +39,6 @@ Resources:
           echo "Instance 2 is ready!" > index.html
           nohup python -m SimpleHTTPServer 80 &
 
-  ECSCluster:
-    Type: AWS::ECS::Cluster
-    Properties:
-      ClusterName: "DeepLearnProject"
 
 
 
