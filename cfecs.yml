@@ -9,7 +9,7 @@ Resources:
           ToPort: 80
           CidrIp: 0.0.0.0/0
 
-  EC2Instance1:
+  EC2Instance:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: ami-03aefa83246f44ef2
@@ -19,29 +19,9 @@ Resources:
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
-          echo "Instance 1 is ready!" > index.html
+          echo "Instance is ready!" > index.html
           nohup python -m SimpleHTTPServer 80 &
 
-  EC2Instance2:
-    Type: AWS::EC2::Instance
-    Properties:
-      ImageId: ami-03aefa83246f44ef2
-      InstanceType: t2.micro
-      SecurityGroupIds:
-        - !Ref InstanceSecurityGroup
-      UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash
-          echo "Instance 2 is ready!" > index.html
-          nohup python -m SimpleHTTPServer 80 &
-
-Outputs:
-  Instance1PublicIP:
-    Description: Public IP address of EC2Instance1
-    Value: !GetAtt EC2Instance1.PublicIp
-  Instance2PublicIP:
-    Description: Public IP address of EC2Instance2
-    Value: !GetAtt EC2Instance2.PublicIp
 
 
 
