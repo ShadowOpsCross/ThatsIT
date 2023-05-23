@@ -1,40 +1,26 @@
 Resources:
-  InstanceSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
+  ECSCluster:
+    Type: AWS::ECS::Cluster
     Properties:
-      GroupDescription: Allow HTTP access
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 0.0.0.0/0
+      ClusterName: "DeepLearnProject"
 
-  EC2Instance1:
-    Type: AWS::EC2::Instance
+  ContainerInstance1:
+    Type: AWS::ECS::ContainerInstance
     Properties:
-      ImageId: ami-03aefa83246f44ef2
+      Cluster: !Ref ECSCluster
       InstanceType: t2.micro
-      SecurityGroupIds:
-        - !Ref InstanceSecurityGroup
-      UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash
-          echo "Instance 1 is ready!" > index.html
-          nohup python -m SimpleHTTPServer 80 &
+      Tags:
+        - Key: Name
+          Value: ContainerInstance1
 
-  EC2Instance2:
-    Type: AWS::EC2::Instance
+  ContainerInstance2:
+    Type: AWS::ECS::ContainerInstance
     Properties:
-      ImageId: ami-03aefa83246f44ef2
+      Cluster: !Ref ECSCluster
       InstanceType: t2.micro
-      SecurityGroupIds:
-        - !Ref InstanceSecurityGroup
-      UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash
-          echo "Instance 2 is ready!" > index.html
-          nohup python -m SimpleHTTPServer 80 &
-
+      Tags:
+        - Key: Name
+          Value: ContainerInstance2
 
 
 
