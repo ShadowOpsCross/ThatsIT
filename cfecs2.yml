@@ -1,9 +1,4 @@
 Resources:
-  ECSCluster:
-    Type: AWS::ECS::Cluster::Default
-    Properties:
-      ClusterName: !Ref ECSCluster
-
   TaskDefinition1:
     Type: AWS::ECS::TaskDefinition
     Properties:
@@ -35,7 +30,7 @@ Resources:
   Service1:
     Type: AWS::ECS::Service
     Properties:
-      Cluster: !Ref ECSCluster
+      Cluster: !GetAtt ECSCluster.Arn
       DesiredCount: 1
       TaskDefinition: !Ref TaskDefinition1
       LaunchType: "EC2"
@@ -44,11 +39,12 @@ Resources:
   Service2:
     Type: AWS::ECS::Service
     Properties:
-      Cluster: !Ref ECSCluster
+      Cluster: !GetAtt ECSCluster.Arn
       DesiredCount: 1
       TaskDefinition: !Ref TaskDefinition2
       LaunchType: "EC2"
       SchedulingStrategy: "REPLICA"
+
 
 
 
