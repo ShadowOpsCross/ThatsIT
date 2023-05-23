@@ -2,7 +2,7 @@ Resources:
   ECSCluster:
     Type: AWS::ECS::Cluster
     Properties:
-      ClusterName: "Boom"
+      ClusterName: "RAMMSTEIN"
 
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
@@ -27,6 +27,7 @@ Resources:
       TaskDefinition: !Ref TaskDefinition
       LaunchType: "EC2"
       SchedulingStrategy: "REPLICA"
+
 
 
 
