@@ -47,6 +47,7 @@ Resources:
       DesiredCount: 1
 
 
+
   Service2:
     Type: AWS::ECS::Service
     Properties:
