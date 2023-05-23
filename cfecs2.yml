@@ -36,15 +36,21 @@ Resources:
     Type: AWS::ECS::Service
     Properties:
       Cluster: !Ref ECSCluster
-      TaskDefinition: !Ref TaskDefinition1
       DesiredCount: 1
+      TaskDefinition: !Ref TaskDefinition1
+      LaunchType: "EC2"
+      SchedulingStrategy: "REPLICA"
 
   Service2:
     Type: AWS::ECS::Service
     Properties:
       Cluster: !Ref ECSCluster
-      TaskDefinition: !Ref TaskDefinition2
       DesiredCount: 1
+      TaskDefinition: !Ref TaskDefinition2
+      LaunchType: "EC2"
+      SchedulingStrategy: "REPLICA"
+
+
 
 
       
