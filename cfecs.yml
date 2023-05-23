@@ -1,4 +1,14 @@
 Resources:
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Instance Security Group"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
   EC2Instance1:
     Type: AWS::EC2::Instance
     Properties:
@@ -23,15 +33,6 @@ Resources:
           #!/bin/bash
           echo ECS_CLUSTER=${ECSCluster} >> /etc/ecs/ecs.config
 
-  InstanceSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: "Instance Security Group"
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: 0.0.0.0/0
 
 
 
