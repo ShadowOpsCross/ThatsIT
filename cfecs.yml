@@ -33,19 +33,6 @@ Resources:
           ToPort: 22
           CidrIp: 0.0.0.0/0
 
-  ECSSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: "ECS Security Group"
-
-  ECSSecurityGroupIngress:
-    Type: AWS::EC2::SecurityGroupIngress
-    Properties:
-      GroupId: !Ref ECSSecurityGroup
-      IpProtocol: tcp
-      FromPort: 80
-      ToPort: 80
-      SourceSecurityGroupId: !Ref InstanceSecurityGroup
 
 
 
