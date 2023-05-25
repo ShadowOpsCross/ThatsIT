@@ -33,4 +33,16 @@ jobs:
           --stack-name node2 \
           --template-file cfecs2.yml \
           --capabilities CAPABILITY_NAMED_IAM
+          
+          
+          
+      - name: Wait for stacks to complete
+        run: |
+          aws cloudformation wait stack-create-complete --stack-name node1
+          aws cloudformation wait stack-create-complete --stack-name node2
+      
+      - name: Display CloudFormation stack outputs
+        run: |
+          aws cloudformation describe-stacks --stack-name node1 --query "Stacks[0].Outputs"
+          aws cloudformation describe-stacks --stack-name node2 --query "Stacks[0].Outputs"
 
