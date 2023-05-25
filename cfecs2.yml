@@ -4,11 +4,6 @@ Resources:
     Properties:
       ClusterName: "DeepLearnProject"
 
-  ContainerInstance:
-    Type: AWS::ECS::ContainerInstance
-    Properties:
-      Cluster: !Ref ECSCluster
-
   TaskDefinition1:
     Type: AWS::ECS::TaskDefinition
     Properties:
@@ -24,6 +19,19 @@ Resources:
       RequiresCompatibilities:
         - "EC2"
 
+  TaskDefinition2:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      ContainerDefinitions:
+        - Name: "simple-task"
+          Image: "hello-world"
+          Memory: 512
+          Cpu: 256
+      Family: "justfamily2"
+      NetworkMode: "bridge"
+      RequiresCompatibilities:
+        - "EC2"
+
   Service1:
     Type: AWS::ECS::Service
     Properties:
@@ -32,9 +40,16 @@ Resources:
       TaskDefinition: !Ref TaskDefinition1
       LaunchType: "EC2"
       SchedulingStrategy: "REPLICA"
-      PlacementConstraints:
-        - Expression: "attribute:ecs.instance-type =~ t2.micro"
-          Type: "memberOf"
+
+  Service2:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster: !Ref ECSCluster
+      DesiredCount: 1
+      TaskDefinition: !Ref TaskDefinition2
+      LaunchType: "EC2"
+      SchedulingStrategy: "REPLICA"
+
 
 
 
