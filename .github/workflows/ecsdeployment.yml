@@ -41,8 +41,8 @@ jobs:
 
       - name: Register EC2 Instances with ECS Cluster
         run: |
-          aws ecs register-container-instance --cluster DeepLearnProject --instance-id ${{ steps.get-instance-ids.outputs.instance-id-1 }}
-          aws ecs register-container-instance --cluster DeepLearnProject --instance-id ${{ steps.get-instance-ids.outputs.instance-id-2 }}
+          aws ecs register-container-instance --cluster DeepLearnProject --container-instance ${{ steps.get-instance-ids.outputs.instance-id-1 }}
+          aws ecs register-container-instance --cluster DeepLearnProject --container-instance ${{ steps.get-instance-ids.outputs.instance-id-2 }}
 
       - name: Deploy ECS Services
         run: |
