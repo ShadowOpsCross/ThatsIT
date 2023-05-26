@@ -1,4 +1,9 @@
 Resources:
+  ECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: "DeepLearnProject"
+
   InstanceSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -21,6 +26,7 @@ Resources:
           #!/bin/bash
           echo "Instance 1 is ready!" > index.html
           nohup python -m SimpleHTTPServer 80 &
+      DependsOn: ECSCluster
 
   EC2Instance2:
     Type: AWS::EC2::Instance
@@ -34,6 +40,14 @@ Resources:
           #!/bin/bash
           echo "Instance 2 is ready!" > index.html
           nohup python -m SimpleHTTPServer 80 &
+      DependsOn: ECSCluster
+
+Outputs:
+  ECSClusterName:
+    Value: !Ref ECSCluster
+    Export:
+      Name: !Sub "${AWS::StackName}-ECSClusterName"
+
 
 
 
