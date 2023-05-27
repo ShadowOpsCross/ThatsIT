@@ -20,7 +20,6 @@ jobs:
           aws-region: eu-central-1
 
       - name: Create EC2 Instances
-        id: create-instances
         run: |
           aws cloudformation deploy \
           --stack-name my-instances-stack \
@@ -32,19 +31,15 @@ jobs:
           aws cloudformation wait stack-create-complete --stack-name my-instances-stack
 
       - name: Get EC2 Instance IDs
-        id: get-instance-ids
-        run: |
-          id1=$(aws cloudformation describe-stacks --stack-name my-instances-stack --query 'Stacks[0].Outputs[?OutputKey==`EC2Instance1`].OutputValue' --output text)
-          id2=$(aws cloudformation describe-stacks --stack-name my-instances-stack --query 'Stacks[0].Outputs[?OutputKey==`EC2Instance2`].OutputValue' --output text)
-          echo "::set-output name=instance-id-1::$id1"
-          echo "::set-output name=instance-id-2::$id2"
+          id1=$(aws cloudformation describe-stack-resources --stack-name my-instances-stack --query 'StackResources[?LogicalResourceId==`EC2Instance1`].PhysicalResourceId' --output text)
+          id2=$(aws cloudformation describe-stack-resources --stack-name my-instances-stack --query 'StackResources[?LogicalResourceId==`EC2Instance2`].PhysicalResourceId' --output text)
+          echo "::set-env name=INSTANCE_ID_1::$id1"
+          echo "::set-env name=INSTANCE_ID_2::$id2"
 
       - name: Register EC2 Instances with ECS Cluster
         run: |
-          instance_id_1=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${{ steps.get-instance-ids.outputs.instance-id-1 }}" --query 'Reservations[0].Instances[0].InstanceId' --output text)
-          instance_id_2=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${{ steps.get-instance-ids.outputs.instance-id-2 }}" --query 'Reservations[0].Instances[0].InstanceId' --output text)
-          instance_arn1=$(aws ecs list-container-instances --cluster DeepLearnProject --filter "ec2InstanceId==${instance_id_1}" --query 'containerInstanceArns[0]' --output text)
-          instance_arn2=$(aws ecs list-container-instances --cluster DeepLearnProject --filter "ec2InstanceId==${instance_id_2}" --query 'containerInstanceArns[0]' --output text)
+          instance_arn1=$(aws ecs list-container-instances --cluster DeepLearnProject --filter "ec2InstanceId==$INSTANCE_ID_1" --query 'containerInstanceArns[0]' --output text)
+          instance_arn2=$(aws ecs list-container-instances --cluster DeepLearnProject --filter "ec2InstanceId==$INSTANCE_ID_2" --query 'containerInstanceArns[0]' --output text)
           aws ecs register-container-instance --cluster DeepLearnProject --container-instance $instance_arn1
           aws ecs register-container-instance --cluster DeepLearnProject --container-instance $instance_arn2
 
@@ -54,6 +49,7 @@ jobs:
           --stack-name my-services-stack \
           --template-file cfecs2.yml \
           --capabilities CAPABILITY_NAMED_IAM
+
 
           
           
