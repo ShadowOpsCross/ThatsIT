@@ -54,6 +54,7 @@ jobs:
           --stack-name my-services-stack \
           --template-file cfecs2.yml \
           --capabilities CAPABILITY_NAMED_IAM
+
           
           
 
