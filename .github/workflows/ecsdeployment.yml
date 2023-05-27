@@ -41,8 +41,10 @@ jobs:
 
       - name: Register EC2 Instances with ECS Cluster
         run: |
-          instance_arn1=$(aws ecs list-container-instances --cluster DeepLearnProject --filter "ec2InstanceId==${{ steps.get-instance-ids.outputs.instance-id-1 }}" --query 'containerInstanceArns[0]' --output text)
-          instance_arn2=$(aws ecs list-container-instances --cluster DeepLearnProject --filter "ec2InstanceId==${{ steps.get-instance-ids.outputs.instance-id-2 }}" --query 'containerInstanceArns[0]' --output text)
+          instance_id_1=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${{ steps.get-instance-ids.outputs.instance-id-1 }}" --query 'Reservations[0].Instances[0].InstanceId' --output text)
+          instance_id_2=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${{ steps.get-instance-ids.outputs.instance-id-2 }}" --query 'Reservations[0].Instances[0].InstanceId' --output text)
+          instance_arn1=$(aws ecs list-container-instances --cluster DeepLearnProject --filter "ec2InstanceId==${instance_id_1}" --query 'containerInstanceArns[0]' --output text)
+          instance_arn2=$(aws ecs list-container-instances --cluster DeepLearnProject --filter "ec2InstanceId==${instance_id_2}" --query 'containerInstanceArns[0]' --output text)
           aws ecs register-container-instance --cluster DeepLearnProject --container-instance $instance_arn1
           aws ecs register-container-instance --cluster DeepLearnProject --container-instance $instance_arn2
 
