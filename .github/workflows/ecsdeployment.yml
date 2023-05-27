@@ -31,6 +31,7 @@ jobs:
           aws cloudformation wait stack-create-complete --stack-name my-instances-stack
 
       - name: Get EC2 Instance IDs
+        run: |
           id1=$(aws cloudformation describe-stack-resources --stack-name my-instances-stack --query 'StackResources[?LogicalResourceId==`EC2Instance1`].PhysicalResourceId' --output text)
           id2=$(aws cloudformation describe-stack-resources --stack-name my-instances-stack --query 'StackResources[?LogicalResourceId==`EC2Instance2`].PhysicalResourceId' --output text)
           echo "::set-env name=INSTANCE_ID_1::$id1"
@@ -49,6 +50,7 @@ jobs:
           --stack-name my-services-stack \
           --template-file cfecs2.yml \
           --capabilities CAPABILITY_NAMED_IAM
+
 
 
           
