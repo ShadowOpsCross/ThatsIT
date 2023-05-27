@@ -3,7 +3,7 @@ name: loperamid
 on:
   push:
     branches:
-     - master 
+      - master 
 
 jobs:
   deploy:
@@ -34,8 +34,8 @@ jobs:
       - name: Get EC2 Instance IDs
         id: get-instance-ids
         run: |
-          id1=$(aws cloudformation describe-stacks --stack-name my-instances-stack --query 'Stacks[0].Outputs[?OutputKey==`InstanceID1`].OutputValue' --output text)
-          id2=$(aws cloudformation describe-stacks --stack-name my-instances-stack --query 'Stacks[0].Outputs[?OutputKey==`InstanceID2`].OutputValue' --output text)
+          id1=$(aws cloudformation describe-stacks --stack-name my-instances-stack --query 'Stacks[0].Outputs[?OutputKey==`EC2Instance1`].OutputValue' --output text)
+          id2=$(aws cloudformation describe-stacks --stack-name my-instances-stack --query 'Stacks[0].Outputs[?OutputKey==`EC2Instance2`].OutputValue' --output text)
           echo "::set-output name=instance-id-1::$id1"
           echo "::set-output name=instance-id-2::$id2"
 
