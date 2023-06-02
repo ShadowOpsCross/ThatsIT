@@ -3,7 +3,7 @@ name: loperamid
 on:
   push:
     branches:
-      - master 
+     - master 
 
 jobs:
   deploy:
@@ -23,22 +23,21 @@ jobs:
         id: create-instances
         run: |
           aws cloudformation deploy \
-            --stack-name my-instances-stack \
-            --template-file cfecs.yml \
-            --capabilities CAPABILITY_NAMED_IAM
+          --stack-name my-instances-stack \
+          --template-file cfecs.yml \
+          --capabilities CAPABILITY_NAMED_IAM
 
       - name: Wait for EC2 Instances to be created
         run: |
           aws cloudformation wait stack-create-complete --stack-name my-instances-stack
 
-            - name: Get EC2 Instance IDs
-              id: get-instance-ids
-              run: |
-                instance_id1=$(aws cloudformation describe-stacks --stack-name my-instances-stack --query 'Stacks[0].Outputs[?OutputKey==`EC2Instance1`].OutputValue' --output text)
-                echo "instance_id_1=$instance_id1" >> $GITHUB_ENV
-                instance_id2=$(aws cloudformation describe-stacks --stack-name my-instances-stack --query 'Stacks[0].Outputs[?OutputKey==`EC2Instance2`].OutputValue' --output text)
-                echo "instance_id_2=$instance_id2" >> $GITHUB_ENV
-
+      - name: Get EC2 Instance IDs
+        id: get-instance-ids
+        run: |
+          id1=$(aws cloudformation describe-stacks --stack-name my-instances-stack --query 'Stacks[0].Outputs[?OutputKey==`EC2Instance1`].OutputValue' --output text)
+          echo "instance_id_1=$id1" >> $GITHUB_ENV
+          id2=$(aws cloudformation describe-stacks --stack-name my-instances-stack --query 'Stacks[0].Outputs[?OutputKey==`EC2Instance2`].OutputValue' --output text)
+          echo "instance_id_2=$id2" >> $GITHUB_ENV
 
       - name: Register EC2 Instances with ECS Cluster
         run: |
@@ -50,9 +49,10 @@ jobs:
       - name: Deploy ECS Services
         run: |
           aws cloudformation deploy \
-            --stack-name my-services-stack \
-            --template-file cfecs2.yml \
-            --capabilities CAPABILITY_NAMED_IAM
+          --stack-name my-services-stack \
+          --template-file cfecs2.yml \
+          --capabilities CAPABILITY_NAMED_IAM
+
 
 
 
