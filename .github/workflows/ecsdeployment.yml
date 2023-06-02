@@ -42,10 +42,11 @@ jobs:
 
       - name: Register EC2 Instances with ECS Cluster
         run: |
-          instance_arn1=$(aws ecs describe-container-instances --cluster DeepLearnProject --filter "name=ec2InstanceId,values=${{ steps.get-instance-ids.outputs.instance-id-1 }}" --query 'containerInstances[0].containerInstanceArn' --output text)
-          instance_arn2=$(aws ecs describe-container-instances --cluster DeepLearnProject --filter "name=ec2InstanceId,values=${{ steps.get-instance-ids.outputs.instance-id-2 }}" --query 'containerInstances[0].containerInstanceArn' --output text)
+          instance_arn1=$(aws ecs describe-container-instances --cluster DeepLearnProject --filter "name=ec2InstanceId,values=${{ steps.get-instance-ids.outputs.instance_id_1 }}" --query 'containerInstances[0].containerInstanceArn' --output text)
+          instance_arn2=$(aws ecs describe-container-instances --cluster DeepLearnProject --filter "name=ec2InstanceId,values=${{ steps.get-instance-ids.outputs.instance_id_2 }}" --query 'containerInstances[0].containerInstanceArn' --output text)
           aws ecs register-container-instance --cluster DeepLearnProject --container-instance-arn $instance_arn1
           aws ecs register-container-instance --cluster DeepLearnProject --container-instance-arn $instance_arn2
+
 
       - name: Deploy ECS Services
         run: |
