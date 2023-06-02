@@ -31,13 +31,14 @@ jobs:
         run: |
           aws cloudformation wait stack-create-complete --stack-name my-instances-stack
 
-      - name: Get EC2 Instance IDs
-        id: get-instance-ids
-        run: |
-          id1=$(aws cloudformation describe-stacks --stack-name my-instances-stack --query 'Stacks[0].Outputs[?OutputKey==`EC2Instance1`].OutputValue' --output text)
-          echo "instance_id_1=$id1" >> $GITHUB_ENV
-          id2=$(aws cloudformation describe-stacks --stack-name my-instances-stack --query 'Stacks[0].Outputs[?OutputKey==`EC2Instance2`].OutputValue' --output text)
-          echo "instance_id_2=$id2" >> $GITHUB_ENV
+            - name: Get EC2 Instance IDs
+              id: get-instance-ids
+              run: |
+                instance_id1=$(aws cloudformation describe-stacks --stack-name my-instances-stack --query 'Stacks[0].Outputs[?OutputKey==`EC2Instance1`].OutputValue' --output text)
+                echo "instance_id_1=$instance_id1" >> $GITHUB_ENV
+                instance_id2=$(aws cloudformation describe-stacks --stack-name my-instances-stack --query 'Stacks[0].Outputs[?OutputKey==`EC2Instance2`].OutputValue' --output text)
+                echo "instance_id_2=$instance_id2" >> $GITHUB_ENV
+
 
       - name: Register EC2 Instances with ECS Cluster
         run: |
