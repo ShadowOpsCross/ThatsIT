@@ -1,18 +1,23 @@
 AWSTemplateFormatVersion: '2010-09-09'
+
 Resources:
-  MyCluster:
+  ECSCluster:
     Type: AWS::ECS::Cluster
     Properties:
       ClusterName: DeepLearnProject
 
-  InstanceSecurityGroup:
+  SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Allow SSH access
+      GroupDescription: Allow SSH and HTTP access
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
           CidrIp: 0.0.0.0/0
 
   EC2Instance1:
@@ -20,28 +25,25 @@ Resources:
     Properties:
       ImageId: ami-01a7573bb17a45f12
       InstanceType: t2.micro
-      SecurityGroupIds:
-        - !Ref InstanceSecurityGroup
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
-          apt-get update
-          apt-get install -y software-package
-          echo "ECS_CLUSTER=DeepLearnProject" >> /etc/ecs/ecs.config
+          echo "ECS_CLUSTER=${ECSCluster}" >> /etc/ecs/ecs.config
+      SecurityGroupIds:
+        - !Ref SecurityGroup
 
   EC2Instance2:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: ami-01a7573bb17a45f12
       InstanceType: t2.micro
-      SecurityGroupIds:
-        - !Ref InstanceSecurityGroup
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
-          apt-get update
-          apt-get install -y software-package
-          echo "ECS_CLUSTER=DeepLearnProject" >> /etc/ecs/ecs.config
+          echo "ECS_CLUSTER=${ECSCluster}" >> /etc/ecs/ecs.config
+      SecurityGroupIds:
+        - !Ref SecurityGroup
+
 
 
 
