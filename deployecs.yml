@@ -1,9 +1,9 @@
-name: loperamid
+name: Deploy Services
 
 on:
   push:
     branches:
-     - master 
+      - master
 
 jobs:
   deploy:
@@ -19,11 +19,20 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: eu-central-1
 
-          
-      - name: Deploy CloudFormation stack
+      - name: Deploy CloudFormation Stack - Instances
         run: |
           aws cloudformation deploy \
-          --stack-name LINDEMANN \
-          --template-file cloudfront.yml \
-          --capabilities CAPABILITY_NAMED_IAM
+            --stack-name node1 \
+            --template-file cfecs.yml \
+            --capabilities CAPABILITY_NAMED_IAM
 
+      - name: Wait for EC2 Instances to be created
+        run: |
+          aws cloudformation wait stack-create-complete --stack-name node1
+
+      - name: Deploy CloudFormation Stack - Services
+        run: |
+          aws cloudformation deploy \
+            --stack-name node2 \
+            --template-file cfecs2.yml \
+            --capabilities CAPABILITY_NAMED_IAM
