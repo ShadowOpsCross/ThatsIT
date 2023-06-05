@@ -1,50 +1,49 @@
+AWSTemplateFormatVersion: '2010-09-09'
 Resources:
-  ECSCluster:
+  MyCluster:
     Type: AWS::ECS::Cluster
     Properties:
-      ClusterName: "DeepLearnProject"
+      ClusterName: DeepLearnProject
 
   InstanceSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Allow HTTP access
+      GroupDescription: Allow SSH access
       SecurityGroupIngress:
         - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
+          FromPort: 22
+          ToPort: 22
           CidrIp: 0.0.0.0/0
 
   EC2Instance1:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-03aefa83246f44ef2
+      ImageId: ami-01a7573bb17a45f12
       InstanceType: t2.micro
       SecurityGroupIds:
         - !Ref InstanceSecurityGroup
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
-          echo "Instance 1 is ready!" > index.html
-          nohup python -m SimpleHTTPServer 80 &
+          apt-get update
+          apt-get install -y software-package
+          echo "ECS_CLUSTER=DeepLearnProject" >> /etc/ecs/ecs.config
 
   EC2Instance2:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-03aefa83246f44ef2
+      ImageId: ami-01a7573bb17a45f12
       InstanceType: t2.micro
       SecurityGroupIds:
         - !Ref InstanceSecurityGroup
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
-          echo "Instance 2 is ready!" > index.html
-          nohup python -m SimpleHTTPServer 80 &
+          apt-get update
+          apt-get install -y software-package
+          echo "ECS_CLUSTER=DeepLearnProject" >> /etc/ecs/ecs.config
 
-Outputs:
-  ECSClusterName:
-    Value: !Ref ECSCluster
-    Export:
-      Name: !Sub "${AWS::StackName}-ECSClusterName"
+
 
 
 
