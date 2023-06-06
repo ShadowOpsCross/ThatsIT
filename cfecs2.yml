@@ -1,3 +1,9 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  StackName:
+    Type: String
+    Default: DeepLearnProject
+
 Resources:
   ECSClusterName:
     Type: AWS::CloudFormation::ImportValue
@@ -49,7 +55,6 @@ Resources:
       TaskDefinition: !Ref TaskDefinition2
       LaunchType: "EC2"
       SchedulingStrategy: "REPLICA"
-
 
 
 
