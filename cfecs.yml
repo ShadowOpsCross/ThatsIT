@@ -1,65 +1,48 @@
 AWSTemplateFormatVersion: '2010-09-09'
-
-Parameters:
-  StackName:
-    Type: String
-
 Resources:
-  Cluster:
-    Type: 'AWS::ECS::Cluster'
+  MyCluster:
+    Type: AWS::ECS::Cluster
     Properties:
-      ClusterName: !Ref DeepLearnProject
+      ClusterName: DeepLearnProject
 
-  SecurityGroup:
-    Type: 'AWS::EC2::SecurityGroup'
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Allow SSH access
+      GroupDescription: Security group for MyInstances
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: your-vpc-id
 
-  EC2Instance1:
-    Type: 'AWS::EC2::Instance'
+  MyInstance1:
+    Type: AWS::EC2::Instance
     Properties:
       ImageId: ami-07151644aeb34558a
       InstanceType: t2.micro
       SecurityGroupIds:
-        - !Ref SecurityGroup
+        - !Ref MySecurityGroup
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
-          apt-get update
-          apt-get install -y software-package
-          # Реєстрація інстансу до кластеру ECS
-          echo ECS_CLUSTER=${Cluster} >> /etc/ecs/ecs.config
+          echo "This is user data for instance 1"
+          echo "Register instance 1 to ECS cluster"
+          INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
+          aws ecs register-container-instance --cluster !Ref MyCluster --container-instance-id $INSTANCE_ID
 
-  EC2Instance2:
-    Type: 'AWS::EC2::Instance'
+  MyInstance2:
+    Type: AWS::EC2::Instance
     Properties:
       ImageId: ami-07151644aeb34558a
       InstanceType: t2.micro
       SecurityGroupIds:
-        - !Ref SecurityGroup
+        - !Ref MySecurityGroup
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
-          apt-get update
-          apt-get install -y software-package
-          # Реєстрація інстансу до кластеру ECS
-          echo ECS_CLUSTER=${Cluster} >> /etc/ecs/ecs.config
-
-Outputs:
-  EC2Instance1:
-    Value: !Ref EC2Instance1
-    Export:
-      Name: EC2Instance1
-
-  EC2Instance2:
-    Value: !Ref EC2Instance2
-    Export:
-      Name: EC2Instance2
+          echo "This is user data for instance 2"
+          echo "Register instance 2 to ECS cluster"
+          INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
+          aws ecs register-container-instance --cluster !Ref MyCluster --container-instance-id $INSTANCE_ID
 
 
