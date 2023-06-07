@@ -5,11 +5,6 @@ Parameters:
     Default: DeepLearnProject
 
 Resources:
-  ECSClusterName:
-    Type: AWS::ECS::Cluster
-    Properties:
-      ClusterName: !Sub "${StackName}-ECSClusterName"
-
   TaskDefinition1:
     Type: AWS::ECS::TaskDefinition
     Properties:
@@ -41,7 +36,7 @@ Resources:
   Service1:
     Type: AWS::ECS::Service
     Properties:
-      Cluster: !Ref ECSClusterName
+      Cluster: !ImportValue ECSClusterName
       DesiredCount: 1
       TaskDefinition: !Ref TaskDefinition1
       LaunchType: "EC2"
@@ -50,19 +45,9 @@ Resources:
   Service2:
     Type: AWS::ECS::Service
     Properties:
-      Cluster: !Ref ECSClusterName
+      Cluster: !ImportValue ECSClusterName
       DesiredCount: 1
       TaskDefinition: !Ref TaskDefinition2
       LaunchType: "EC2"
       SchedulingStrategy: "REPLICA"
 
-
-
-
-
-
-
-
-
-      
- 
