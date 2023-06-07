@@ -50,4 +50,10 @@ Resources:
           INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
           aws ecs register-container-instance --cluster !Ref ECSClusterName --container-instance-id $INSTANCE_ID
 
+Outputs:
+  ECSClusterNameOutput:
+    Value: !Ref ECSClusterName
+    Export:
+      Name: ECSClusterName
+
 
