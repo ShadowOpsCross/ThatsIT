@@ -77,6 +77,7 @@ Resources:
           echo "Register instance 2 to ECS cluster"
           INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
           aws ecs register-container-instance --cluster !ImportValue ECSClusterNameExport --container-instance-id $INSTANCE_ID
+          
 
 
 
