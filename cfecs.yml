@@ -20,6 +20,32 @@ Resources:
           ToPort: 22
           CidrIp: 0.0.0.0/0
 
+  ECSClusterInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref ECSClusterRole
+
+  ECSClusterRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: ECSClusterRolePolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ecs:RegisterContainerInstance
+                Resource: "*"
+
   MyInstance1:
     Type: AWS::EC2::Instance
     Properties:
@@ -27,15 +53,14 @@ Resources:
       InstanceType: t2.micro
       SecurityGroupIds:
         - !Ref MySecurityGroup
+      IamInstanceProfile: !Ref ECSClusterInstanceProfile
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
           echo "This is user data for instance 1"
-          echo "Registering instance 1 to ECS cluster"
+          echo "Register instance 1 to ECS cluster"
           INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
-          REGISTER_OUTPUT=$(aws ecs create-container-instance --cluster !Ref ECSClusterName --instance-id $INSTANCE_ID)
-          echo "Registration output:"
-          echo $REGISTER_OUTPUT
+          aws ecs register-container-instance --cluster !Ref ECSClusterName --container-instance-id $INSTANCE_ID
 
   MyInstance2:
     Type: AWS::EC2::Instance
@@ -44,19 +69,14 @@ Resources:
       InstanceType: t2.micro
       SecurityGroupIds:
         - !Ref MySecurityGroup
+      IamInstanceProfile: !Ref ECSClusterInstanceProfile
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
           echo "This is user data for instance 2"
-          echo "Registering instance 2 to ECS cluster"
+          echo "Register instance 2 to ECS cluster"
           INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
-          REGISTER_OUTPUT=$(aws ecs create-container-instance --cluster !Ref ECSClusterName --instance-id $INSTANCE_ID)
-          echo "Registration output:"
-          echo $REGISTER_OUTPUT
-Outputs:
-  ECSClusterNameOutput:
-    Value: !Ref ECSClusterName
-    Export:
-      Name: ECSClusterName
+          aws ecs register-container-instance --cluster !Ref ECSClusterName --container-instance-id $INSTANCE_ID
+
 
 
