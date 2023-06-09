@@ -8,7 +8,7 @@ Resources:
   ECSClusterName:
     Type: AWS::ECS::Cluster
     Properties:
-      ClusterName: DeepLearnProject
+      ClusterName: !Sub "${StackName}"
 
   MySecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -57,7 +57,7 @@ Resources:
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
-          echo ECS_CLUSTER=!Ref ECSClusterName >> /etc/ecs/ecs.config
+          echo ECS_CLUSTER=${ECSClusterName} >> /etc/ecs/ecs.config
 
 
   MyInstance2:
@@ -71,7 +71,7 @@ Resources:
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
-          echo "ECS_CLUSTER=${ECSClusterName}" >> /etc/ecs/ecs.config
+          echo ECS_CLUSTER=${ECSClusterName} >> /etc/ecs/ecs.config
           
 
 Outputs:
