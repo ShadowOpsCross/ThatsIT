@@ -58,9 +58,15 @@ Resources:
         Fn::Base64: !Sub |
           #!/bin/bash
           echo "This is user data for instance 1"
-          echo "Register instance 1 to ECS cluster"
+          echo "Register instance 1 as ECS container instance"
           INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
-          aws ecs register-container-instance --cluster !Ref ECSClusterNameExport --container-instance-id $INSTANCE_ID
+          REGION=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region)
+          echo "AWS_REGION=$REGION" >> /etc/ecs/ecs.config
+          echo "ECS_CLUSTER=!Ref ECSClusterName" >> /etc/ecs/ecs.config
+          echo "ECS_INSTANCE_ID=$INSTANCE_ID" >> /etc/ecs/ecs.config
+          echo "ECS_INSTANCE_ATTRIBUTES=Name=MyInstance1,Environment=Production" >> /etc/ecs/ecs.config
+          start ecs
+
 
   MyInstance2:
     Type: AWS::EC2::Instance
@@ -73,10 +79,15 @@ Resources:
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
-          echo "This is user data for instance 2"
-          echo "Register instance 2 to ECS cluster"
+          echo "This is user data for instance 1"
+          echo "Register instance 1 as ECS container instance"
           INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
-          aws ecs register-container-instance --cluster !Ref ECSClusterNameExport --container-instance-id $INSTANCE_ID
+          REGION=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region)
+          echo "AWS_REGION=$REGION" >> /etc/ecs/ecs.config
+          echo "ECS_CLUSTER=!Ref ECSClusterName" >> /etc/ecs/ecs.config
+          echo "ECS_INSTANCE_ID=$INSTANCE_ID" >> /etc/ecs/ecs.config
+          echo "ECS_INSTANCE_ATTRIBUTES=Name=MyInstance1,Environment=Production" >> /etc/ecs/ecs.config
+          start ecs
           
 
 Outputs:
