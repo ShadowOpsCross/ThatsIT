@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
   StackName:
     Type: String
-    Default: DeepLearnProject
+    Default: node1
 
 Resources:
   ECSClusterName:
@@ -60,7 +60,7 @@ Resources:
           echo "This is user data for instance 1"
           echo "Register instance 1 as ECS container instance"
           INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
-          REGION=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region)
+          REGION= eu-central-1
           echo "AWS_REGION=$REGION" >> /etc/ecs/ecs.config
           echo "ECS_CLUSTER=!Ref ECSClusterName" >> /etc/ecs/ecs.config
           echo "ECS_INSTANCE_ID=$INSTANCE_ID" >> /etc/ecs/ecs.config
@@ -82,7 +82,7 @@ Resources:
           echo "This is user data for instance 1"
           echo "Register instance 1 as ECS container instance"
           INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
-          REGION=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region)
+          REGION= eu-central-1
           echo "AWS_REGION=$REGION" >> /etc/ecs/ecs.config
           echo "ECS_CLUSTER=!Ref ECSClusterName" >> /etc/ecs/ecs.config
           echo "ECS_INSTANCE_ID=$INSTANCE_ID" >> /etc/ecs/ecs.config
