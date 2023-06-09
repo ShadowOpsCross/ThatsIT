@@ -76,7 +76,7 @@ Resources:
 
 Outputs:
   ECSClusterNameExport:
-    Value: !Ref ClusterName
+    Value: !Ref ECSClusterName
     Export:
       Name: ECSClusterName
 
