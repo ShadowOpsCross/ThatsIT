@@ -60,7 +60,7 @@ Resources:
           echo "This is user data for instance 1"
           echo "Register instance 1 to ECS cluster"
           INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
-          aws ecs register-container-instance --cluster !ImportValue ECSClusterName --container-instance-id $INSTANCE_ID
+          aws ecs register-container-instance --cluster !Ref ECSClusterNameExport --container-instance-id $INSTANCE_ID
 
   MyInstance2:
     Type: AWS::EC2::Instance
@@ -76,7 +76,7 @@ Resources:
           echo "This is user data for instance 2"
           echo "Register instance 2 to ECS cluster"
           INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
-          aws ecs register-container-instance --cluster !ImportValue ECSClusterName --container-instance-id $INSTANCE_ID
+          aws ecs register-container-instance --cluster !Ref ECSClusterNameExport --container-instance-id $INSTANCE_ID
           
 
 Outputs:
