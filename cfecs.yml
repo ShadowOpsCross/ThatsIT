@@ -56,9 +56,6 @@ Resources:
       MinSize: 2
       MaxSize: 2
       DesiredCapacity: 2
-      VPCZoneIdentifier:
-        - !Ref Subnet1
-        - !Ref Subnet2
       Tags:
         - Key: Name
           Value: EC2Instance
@@ -69,6 +66,4 @@ Outputs:
     Value: !Ref ECSCluster
   ClusterARN:
     Value: !GetAtt ECSCluster.Arn
-  SubnetId:
-    Value: !Ref Subnet1
 
