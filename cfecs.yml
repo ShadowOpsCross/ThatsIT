@@ -1,32 +1,11 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Parameters:
-  StackName:
-    Type: String
-    Default: node1
-
 Resources:
-  ECSClusterName:
+  ECSCluster:
     Type: AWS::ECS::Cluster
     Properties:
-      ClusterName: !Sub "${StackName}"
+      ClusterName: DeepStick
 
-  MySecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Security group for MyInstances
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: 0.0.0.0/0
-
-  ECSClusterInstanceProfile:
-    Type: AWS::IAM::InstanceProfile
-    Properties:
-      Roles:
-        - !Ref ECSClusterRole
-
-  ECSClusterRole:
+  EC2InstanceRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -36,28 +15,62 @@ Resources:
             Principal:
               Service: ec2.amazonaws.com
             Action: sts:AssumeRole
-      Policies:
-        - PolicyName: ECSClusterRolePolicy
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - ecs:RegisterContainerInstance
-                Resource: "*"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
 
+  EC2InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref EC2InstanceRole
 
-          
+  EC2InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for ECS EC2 instances
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
+  EC2InstanceLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: EC2InstanceLaunchTemplate
+      LaunchTemplateData:
+        ImageId: ami-04e4606740c9c9381
+        InstanceType: t2.micro
+        IamInstanceProfile:
+          Name: !Ref EC2InstanceProfile
+        SecurityGroupIds:
+          - !Ref EC2InstanceSecurityGroup
+        UserData:
+          Fn::Base64: !Sub |
+            #!/bin/bash
+            echo ECS_CLUSTER=DeepStick >> /etc/ecs/ecs.config
+        TagSpecifications:
+          - ResourceType: instance
+            Tags:
+              - Key: Name
+                Value: ECSInstance
+
+  EC2AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AutoScalingGroupName: EC2AutoScalingGroup
+      LaunchTemplate:
+        LaunchTemplateName: !Ref EC2InstanceLaunchTemplate
+        Version: !GetAtt EC2InstanceLaunchTemplate.LatestVersionNumber
+      MinSize: 1
+      MaxSize: 2
+      DesiredCapacity: 1
+      Tags:
+        - Key: Name
+          Value: EC2Instance
+          PropagateAtLaunch: 'true'
 
 Outputs:
-  ECSClusterNameExport:
-    Value: !Ref ECSClusterName
-    Export:
-      Name: ECSClusterName
-
-
-
-
-
-
-
+  ECSClusterName:
+    Value: !Ref ECSCluster
+    Description: ECS Cluster Name
