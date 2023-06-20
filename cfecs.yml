@@ -1,15 +1,27 @@
-AWSTemplateFormatVersion: '2010-09-09'
 Resources:
   ECSCluster:
     Type: AWS::ECS::Cluster
     Properties:
       ClusterName: DeepStick
 
+  EC2InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for EC2 instances
+      VpcId: !Ref VPC
+
+  EC2InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: "/"
+      Roles:
+        - !Ref EC2InstanceRole
+
   EC2InstanceRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Principal:
@@ -18,59 +30,45 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
 
-  EC2InstanceProfile:
-    Type: AWS::IAM::InstanceProfile
-    Properties:
-      Roles:
-        - !Ref EC2InstanceRole
-
-  EC2InstanceSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Security group for ECS EC2 instances
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: 0.0.0.0/0
-
-  EC2InstanceLaunchTemplate:
+  EC2LaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
     Properties:
-      LaunchTemplateName: EC2InstanceLaunchTemplate
+      LaunchTemplateName: EC2LaunchTemplate
       LaunchTemplateData:
         ImageId: ami-04e4606740c9c9381
         InstanceType: t2.micro
-        IamInstanceProfile:
-          Name: !Ref EC2InstanceProfile
         SecurityGroupIds:
           - !Ref EC2InstanceSecurityGroup
+        IamInstanceProfile:
+          Arn: !GetAtt EC2InstanceProfile.Arn
         UserData:
           Fn::Base64: !Sub |
             #!/bin/bash
-            echo ECS_CLUSTER=DeepStick >> /etc/ecs/ecs.config
-        TagSpecifications:
-          - ResourceType: instance
-            Tags:
-              - Key: Name
-                Value: ECSInstance
+            echo ECS_CLUSTER=${ECSCluster} >> /etc/ecs/ecs.config
 
-  EC2AutoScalingGroup:
+  AutoScalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
       AutoScalingGroupName: EC2AutoScalingGroup
       LaunchTemplate:
-        LaunchTemplateName: !Ref EC2InstanceLaunchTemplate
-        Version: !GetAtt EC2InstanceLaunchTemplate.LatestVersionNumber
-      MinSize: 1
+        LaunchTemplateName: EC2LaunchTemplate
+        Version: !GetAtt EC2LaunchTemplate.LatestVersionNumber
+      MinSize: 2
       MaxSize: 2
-      DesiredCapacity: 1
+      DesiredCapacity: 2
+      VPCZoneIdentifier:
+        - !Ref Subnet1
+        - !Ref Subnet2
       Tags:
         - Key: Name
           Value: EC2Instance
-          PropagateAtLaunch: 'true'
+          PropagateAtLaunch: true
 
 Outputs:
-  ECSClusterName:
+  ClusterName:
     Value: !Ref ECSCluster
-    Description: ECS Cluster Name
+  ClusterARN:
+    Value: !GetAtt ECSCluster.Arn
+  SubnetId:
+    Value: !Ref Subnet1
+
