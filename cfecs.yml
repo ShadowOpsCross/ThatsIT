@@ -3,7 +3,19 @@ Resources:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: 10.0.0.0/16
-      
+
+  Subnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.0.0/24
+
+  Subnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.1.0/24
+
   ECSCluster:
     Type: AWS::ECS::Cluster
     Properties:
@@ -61,6 +73,9 @@ Resources:
       MinSize: 2
       MaxSize: 2
       DesiredCapacity: 2
+      VPCZoneIdentifier:
+        - !Ref Subnet1
+        - !Ref Subnet2
       Tags:
         - Key: Name
           Value: EC2Instance
@@ -69,7 +84,4 @@ Resources:
 Outputs:
   ClusterName:
     Value: !Ref ECSCluster
-
-  ClusterARN:
-    Value: !GetAtt ECSCluster.Arn
 
