@@ -64,6 +64,7 @@ Resources:
 Outputs:
   ClusterName:
     Value: !Ref ECSCluster
+
   ClusterARN:
     Value: !GetAtt ECSCluster.Arn
 
