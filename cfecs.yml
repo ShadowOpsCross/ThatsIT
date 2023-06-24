@@ -82,7 +82,9 @@ Resources:
           PropagateAtLaunch: true
 
 Outputs:
-  ClusterName:
+  ECSClusterName:
     Value: !Ref ECSCluster
+    Export:
+      Name: ECSClusterName
 
 
