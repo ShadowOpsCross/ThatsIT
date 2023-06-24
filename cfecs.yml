@@ -52,7 +52,7 @@ Resources:
     Properties:
       LaunchTemplateName: EC2LaunchTemplate
       LaunchTemplateData:
-        ImageId: ami-04e4606740c9c9381
+        ImageId: ami-0b2ac948e23c57071
         InstanceType: t2.micro
         SecurityGroupIds:
           - !Ref EC2InstanceSecurityGroup
