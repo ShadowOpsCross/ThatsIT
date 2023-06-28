@@ -3,22 +3,22 @@ Resources:
   MyEC2Instance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-0a32b54520652b8b1  # ID образу Amazon Linux 2
-      InstanceType: t2.micro  # Тип інстансу EC2, який вибираєте
+      ImageId: ami-0a32b54520652b8b1  # ID of the Amazon Linux 2 image
+      InstanceType: t2.micro  # Choose your desired EC2 instance type
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
-          yum update -y  # Оновлення системи
-          yum install -y docker  # Встановлення Docker
-          service docker start  # Запуск сервісу Docker
-          docker run -d -p 80:80 nginx  # Запуск контейнера Nginx на порту 80
-    MyEIP:
-      Type: AWS::EC2::EIP
-      Properties:
-        InstanceId: !Ref MyEC2Instance  # Вказуємо, що Elastic IP пов'язаний з інстансом MyEC2Instance
+          yum update -y  # Update the system
+          yum install -y docker  # Install Docker
+          service docker start  # Start the Docker service
+          docker run -d -p 80:80 nginx  # Run the Nginx container on port 80
+  MyEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref MyEC2Instance  # Associate the Elastic IP with MyEC2Instance
   MyEIPAssociation:
     Type: AWS::EC2::EIPAssociation
     Properties:
-      AllocationId: !GetAtt MyEIP.AllocationId  # Отримуємо Allocation ID для Elastic IP
-      InstanceId: !Ref MyEC2Instance  # Прив'язка Elastic IP до інстансу MyEC2Instance
+      AllocationId: !GetAtt MyEIP.AllocationId  # Get the Allocation ID for the Elastic IP
+      InstanceId: !Ref MyEC2Instance  # Associate the Elastic IP with MyEC2Instance
 
