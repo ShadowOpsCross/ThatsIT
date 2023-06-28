@@ -22,3 +22,4 @@ Resources:
       AllocationId: !GetAtt MyEIP.AllocationId  # Get the Allocation ID for the Elastic IP
       InstanceId: !Ref MyEC2Instance  # Associate the Elastic IP with MyEC2Instance
 
+
