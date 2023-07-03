@@ -49,10 +49,6 @@ Resources:
     Type: AWS::EC2::EIP
     Properties:
       InstanceId: !Ref MyEC2Instance  # Пов'язати Elastic IP з MyEC2Instance
-  MyEIPAssociation:
-    Type: AWS::EC2::EIPAssociation
-    Properties:
-      AllocationId: !GetAtt MyEIP.AllocationId  # Отримати Allocation ID для Elastic IP
   MySecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -63,12 +59,10 @@ Resources:
           FromPort: 80
           ToPort: 80
           CidrIp: 0.0.0.0/0
-      SecurityGroupEgress:  # Правила для вихідного трафіку
-        - IpProtocol: '-1'  # Дозволити весь вихідний трафік
+      SecurityGroupEgress:
+        - IpProtocol: '-1'
           CidrIp: 0.0.0.0/0
       Tags:
         - Key: Name
           Value: MySecurityGroup
-          
-
 
