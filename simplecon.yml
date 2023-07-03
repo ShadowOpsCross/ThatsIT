@@ -24,8 +24,8 @@ Resources:
   MySecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Дозволити доступ до HTTP
-      VpcId: your-vpc-id  # Замініть на власний VPC ID
+      GroupDescription: Allow HTTP access
+      VpcId: !Ref "AWS::EC2::VPC::Id"  # Автоматично отримати ідентифікатор VPC
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 80
@@ -37,3 +37,4 @@ Resources:
       Tags:
         - Key: Name
           Value: MySecurityGroup
+
