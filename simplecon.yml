@@ -25,8 +25,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Allow HTTP access
-      VpcId: !Sub |
-        `aws ec2 describe-vpcs --query "Vpcs[0].VpcId" --output text`  # Отримати ідентифікатор VPC автоматично
+      VpcId: default  # Використати основну (default) VPC
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 80
