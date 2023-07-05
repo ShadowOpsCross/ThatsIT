@@ -38,6 +38,7 @@ Resources:
       ImageId: ami-0749e2c902c836c08  # ID образу Amazon Linux 2
       InstanceType: t2.micro  # Оберіть потрібний тип EC2 інстансу
       SubnetId: !Ref MySubnet
+      KeyName: wireguard  # Назва ключа KeyPair
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
@@ -65,4 +66,3 @@ Resources:
       Tags:
         - Key: Name
           Value: MySecurityGroup
-
