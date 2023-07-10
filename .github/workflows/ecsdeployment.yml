@@ -1,4 +1,4 @@
-name: loperamid
+name: Deploy to ECS
 
 on:
   push:
