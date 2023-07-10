@@ -74,8 +74,7 @@ Resources:
         UserData:
           Fn::Base64: !Sub |
             #!/bin/bash
-            a
-            echo ECS_CLUSTER=${ECSCluster} >> /etc/ecs/ecs.config
+            apt update && apt upgrade -y
 
   # AutoScalingGroup:
   #   Type: AWS::AutoScaling::AutoScalingGroup
