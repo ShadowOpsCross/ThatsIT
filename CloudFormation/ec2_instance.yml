@@ -76,23 +76,22 @@ Resources:
             #!/bin/bash
             apt update && apt upgrade -y
 
-  # AutoScalingGroup:
-  #   Type: AWS::AutoScaling::AutoScalingGroup
-  #   Properties:
-  #     AutoScalingGroupName: EC2AutoScalingGroup
-  #     LaunchTemplate:
-  #       LaunchTemplateName: EC2LaunchTemplate
-  #       Version: !GetAtt EC2LaunchTemplate.LatestVersionNumber
-  #     MinSize: 2
-  #     MaxSize: 2
-  #     DesiredCapacity: 2
-  #     VPCZoneIdentifier:
-  #       - !Ref Subnet1
-  #       - !Ref Subnet2
-  #     Tags:
-  #       - Key: Name
-  #         Value: EC2Instance
-  #         PropagateAtLaunch: true
+  AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AutoScalingGroupName: EC2AutoScalingGroup
+      LaunchTemplate:
+        LaunchTemplateName: EC2LaunchTemplate
+        Version: !GetAtt EC2LaunchTemplate.LatestVersionNumber
+      MinSize: 1
+      MaxSize: 1
+      DesiredCapacity: 1
+      VPCZoneIdentifier:
+        - !Ref Subnet1
+      Tags:
+        - Key: Name
+          Value: EC2UbuntuInstance
+          PropagateAtLaunch: true
 
 # Outputs:
 #   ECSClusterName:

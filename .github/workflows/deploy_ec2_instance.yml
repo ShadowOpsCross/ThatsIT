@@ -21,9 +21,9 @@ jobs:
           aws-region: eu-central-1
 
           
-      - name: Deploy nodik
+      - name: Deploy Ubuntu EC2
         run: |
           aws cloudformation deploy \
-          --stack-name nodik \
+          --stack-name ubuntu-ec2 \
           --template-file CloudFormation/ec2_instance.yml \
           --capabilities CAPABILITY_NAMED_IAM
