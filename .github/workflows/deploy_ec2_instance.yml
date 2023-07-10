@@ -1,9 +1,10 @@
-name: loperamid
+name: Deploy AWS EC2 Instance
 
 on:
   push:
     branches:
-     - master 
+     - master
+     - test
 
 jobs:
   deploy:
@@ -24,5 +25,5 @@ jobs:
         run: |
           aws cloudformation deploy \
           --stack-name nodik \
-          --template-file cftest.yml \
+          --template-file CloudFormation/ec2_instance.yml \
           --capabilities CAPABILITY_NAMED_IAM
