@@ -42,12 +42,12 @@ Resources:
         - Key: Name
           Value: EC2-SG
 
-  EC2InstanceProfile:
-    Type: AWS::IAM::InstanceProfile
-    Properties:
-      Path: "/"
-      Roles:
-        - !Ref EC2InstanceRole
+  # EC2InstanceProfile:
+  #   Type: AWS::IAM::InstanceProfile
+  #   Properties:
+  #     Path: "/"
+  #     Roles:
+  #       - !Ref EC2InstanceRole
 
   # EC2InstanceRole:
   #   Type: AWS::IAM::Role
