@@ -62,10 +62,10 @@ Resources:
   #     ManagedPolicyArns:
   #       - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
 
-  EC2LaunchTemplate:
+  UbuntuLT:
     Type: AWS::EC2::LaunchTemplate
     Properties:
-      LaunchTemplateName: EC2LaunchTemplate
+      LaunchTemplateName: UbuntuLT
       LaunchTemplateData:
         ImageId: !Ref LatestUbuntuFocalAMI
         InstanceType: t2.micro
@@ -81,8 +81,8 @@ Resources:
     Properties:
       AutoScalingGroupName: EC2AutoScalingGroup
       LaunchTemplate:
-        LaunchTemplateName: EC2LaunchTemplate
-        Version: !GetAtt EC2LaunchTemplate.LatestVersionNumber
+        LaunchTemplateName: UbuntuLT
+        Version: !GetAtt UbuntuLT.LatestVersionNumber
       MinSize: 1
       MaxSize: 1
       DesiredCapacity: 1

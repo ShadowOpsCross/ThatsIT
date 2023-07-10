@@ -1,4 +1,4 @@
-name: Deploy AWS EC2 Instance
+name: Deploy AWS EC2 Ubuntu Instance
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
      - test
 
 jobs:
-  deploy:
+  deploy_ubuntu_ec2:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
