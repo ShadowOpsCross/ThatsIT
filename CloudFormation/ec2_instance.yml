@@ -76,18 +76,9 @@ Resources:
           Fn::Base64: !Sub |
             #!/bin/bash
             apt update && apt upgrade -y
-  UBEIP:
-    Type: AWS::EC2::EIP
-    Properties:
-      InstanceId: !Ref UbuntuLT  # Пов'язати Elastic IP 
-      
-  UBEIPAssociation:
-    Type: AWS::EC2::EIPAssociation
-    Properties:
-      AllocationId: !GetAtt UBEIP.AllocationId
-      InstanceId: !Ref UbuntuLT
+  
 
-  AutoScalingGroup:
+AutoScalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
       AutoScalingGroupName: EC2AutoScalingGroup
@@ -103,6 +94,16 @@ Resources:
         - Key: Name
           Value: EC2UbuntuInstance
           PropagateAtLaunch: true
+  UBEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref UbuntuLT  # Пов'язати Elastic IP 
+      
+  UBEIPAssociation:
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      AllocationId: !GetAtt UBEIP.AllocationId
+      InstanceId: !Ref UbuntuLT
 
 # Outputs:
 #   ECSClusterName:
