@@ -94,16 +94,6 @@ Resources:
         - Key: Name
           Value: EC2UbuntuInstance
           PropagateAtLaunch: true
-  UBEIP:
-    Type: AWS::EC2::EIP
-    Properties:
-      InstanceId: EC2UbuntuInstance
-      
-  UBEIPAssociation:
-    Type: AWS::EC2::EIPAssociation
-    Properties:
-      AllocationId: !GetAtt UBEIP.AllocationId
-      InstanceId: EC2UbuntuInstance
 
 
 # Outputs:
