@@ -105,6 +105,7 @@ Resources:
       AllocationId: !GetAtt UBEIP.AllocationId
       InstanceId: !Ref AutoScalingGroup
 
+
 # Outputs:
 #   ECSClusterName:
 #     Value: !Ref ECSCluster
