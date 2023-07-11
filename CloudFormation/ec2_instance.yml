@@ -78,7 +78,7 @@ Resources:
             apt update && apt upgrade -y
   
 
-AutoScalingGroup:
+  AutoScalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
       AutoScalingGroupName: EC2AutoScalingGroup
