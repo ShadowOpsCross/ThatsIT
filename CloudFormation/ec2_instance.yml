@@ -97,13 +97,13 @@ Resources:
   UBEIP:
     Type: AWS::EC2::EIP
     Properties:
-      InstanceId: !Ref AutoScalingGroup  # Пов'язати Elastic IP 
+      InstanceId: EC2UbuntuInstance
       
   UBEIPAssociation:
     Type: AWS::EC2::EIPAssociation
     Properties:
       AllocationId: !GetAtt UBEIP.AllocationId
-      InstanceId: !Ref AutoScalingGroup
+      InstanceId: EC2UbuntuInstance
 
 
 # Outputs:
