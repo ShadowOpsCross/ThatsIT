@@ -70,6 +70,8 @@ Resources:
         NetworkInterfaces:
           - DeviceIndex: 0
             AssociatePublicIpAddress: true
+            Groups:
+              - !Ref EC2SG
         ImageId: !Ref LatestUbuntuFocalAMI
         KeyName: wireguard  
         InstanceType: t2.micro
