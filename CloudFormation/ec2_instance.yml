@@ -1,4 +1,4 @@
-Parameters:
+`Parameters:
   LatestUbuntuFocalAMI:
     Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
     Default: /aws/service/canonical/ubuntu/server/focal/stable/current/amd64/hvm/ebs-gp2/ami-id
@@ -70,7 +70,8 @@ Resources:
         NetworkInterfaces:
           - DeviceIndex: 0
             AssociatePublicIpAddress: true
-            Group: !Ref EC2SG
+            Groups:
+              - !Ref EC2SG
         ImageId: !Ref LatestUbuntuFocalAMI
         KeyName: wireguard  
         InstanceType: t2.micro
