@@ -67,6 +67,9 @@ Resources:
     Properties:
       LaunchTemplateName: UbuntuLT
       LaunchTemplateData:
+        NetworkInterfaces:
+          - DeviceIndex: 0
+            AssociatePublicIpAddress: true
         ImageId: !Ref LatestUbuntuFocalAMI
         KeyName: wireguard  
         InstanceType: t2.micro
