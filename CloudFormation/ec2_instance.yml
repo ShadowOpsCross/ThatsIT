@@ -100,6 +100,7 @@ Resources:
 
 
 # Outputs:
+
 #   ECSClusterName:
 #     Value: !Ref ECSCluster
 #     Export:
