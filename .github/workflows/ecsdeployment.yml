@@ -1,0 +1,41 @@
+name: loperamid
+
+on:
+  push:
+    branches:
+      - master 
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: eu-central-1
+
+      - name: Create EC2 Instances
+        id: create-instances
+        run: |
+          aws cloudformation deploy \
+            --stack-name node1 \
+            --template-file cfecs.yml \
+            --capabilities CAPABILITY_NAMED_IAM
+
+      - name: Wait for EC2 Instances to be created
+        run: |
+          aws cloudformation wait stack-create-complete --stack-name node1 --region eu-central-1
+
+
+      - name: Deploy ECS Services
+        run: |
+          aws cloudformation deploy \
+            --stack-name node2 \
+            --template-file cfecs2.yml \
+            --capabilities CAPABILITY_NAMED_IAM
+
