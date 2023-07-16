@@ -3,12 +3,12 @@ Resources:
   MyVPC:
     Type: AWS::EC2::VPC
     Properties:
-      CidrBlock: 10.0.0.0/16  # Вказати бажаний блок CIDR для VPC
+      CidrBlock: 10.0.0.0/16
   MySubnet:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref MyVPC
-      CidrBlock: 10.0.0.0/24  # Вказати бажаний блок CIDR для підмережі
+      CidrBlock: 10.0.0.0/24
   MyInternetGateway:
     Type: AWS::EC2::InternetGateway
   MyVPCGatewayAttachment:
@@ -35,25 +35,20 @@ Resources:
   MyEC2Instance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-0749e2c902c836c08  # ID образу Amazon Linux 2
-      InstanceType: t2.micro  # Оберіть потрібний тип EC2 інстансу
+      ImageId: ami-0749e2c902c836c08
+      InstanceType: t2.micro
       SubnetId: !Ref MySubnet
-      KeyName: wireguard  # Назва ключа KeyPair
+      KeyName: wireguard
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
-          yum update -y  # Оновити систему
-          yum install -y docker  # Встановити Docker
-          service docker start  # Запустити сервіс Docker
-          docker run -d -p 80:80 nginx  # Запустити контейнер Nginx на порту 80
+          yum update -y
+          yum install -y docker
+          service docker start
+          docker run -d -p 80:80 nginx
   MyEIP:
     Type: AWS::EC2::EIP
     Properties:
-      InstanceId: !Ref MyEC2Instance  # Пов'язати Elastic IP з MyEC2Instance
-  MyEIPAssociation:
-    Type: AWS::EC2::EIPAssociation
-    Properties:
-      AllocationId: !GetAtt MyEIP.AllocationId
       InstanceId: !Ref MyEC2Instance
   MySecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -69,16 +64,9 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-          
       SecurityGroupEgress:
         - IpProtocol: '-1'
           CidrIp: 0.0.0.0/0
       Tags:
         - Key: Name
-          Value: MySecurityGroup
-
-      
-        - Key: Name
-          Value: MySecurityGroup
-          
-
+          Value: SG
