@@ -66,3 +66,7 @@ Resources:
       Tags:
         - Key: Name
           Value: SG
+  MyEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref MyEC2Instance
