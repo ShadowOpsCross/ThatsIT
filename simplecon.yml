@@ -46,15 +46,6 @@ Resources:
           yum install -y docker
           service docker start
           docker run -d -p 80:80 nginx
-  MyEIP:
-    Type: AWS::EC2::EIP
-    Properties:
-      InstanceId: !Ref MyEC2Instance
-  MyEIPAssociation:
-    Type: AWS::EC2::EIPAssociation
-    Properties:
-      AllocationId: !GetAtt MyEIP.AllocationId
-      InstanceId: !Ref MyEC2Instance
   MySecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -74,11 +65,4 @@ Resources:
           CidrIp: 0.0.0.0/0
       Tags:
         - Key: Name
-          Value: MySecurityGroup
-  MyRouteToInternetGateway:
-    Type: AWS::EC2::Route
-    DependsOn: MyVPCGatewayAttachment
-    Properties:
-      RouteTableId: !Ref MyRouteTable
-      DestinationIpv6CidrBlock: ::/0
-      GatewayId: !Ref MyInternetGateway
+          Value: SG
