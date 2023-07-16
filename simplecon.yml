@@ -68,3 +68,7 @@ Resources:
       Tags:
         - Key: Name
           Value: MySecurityGroup
+  MyEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref MyEC2Instance
