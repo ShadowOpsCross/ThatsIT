@@ -69,4 +69,9 @@ Resources:
   MyEIP:
     Type: AWS::EC2::EIP
     Properties:
+      InstanceId: !Ref MyEC2Instance4
+  MyEC2InstanceSecurityGroupAttachment:
+    Type: AWS::EC2::InstanceSecurityGroupAttachment
+    Properties:
       InstanceId: !Ref MyEC2Instance
+      GroupId: !Ref MySecurityGroup
