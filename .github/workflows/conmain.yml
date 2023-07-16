@@ -1,10 +1,23 @@
-name: loperamid
+name: instance
 
 on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+    
   push:
     branches:
-      - master 
+      - test 
 
+    
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -26,4 +39,3 @@ jobs:
             --stack-name node \
             --template-file simplecon.yml \
             --capabilities CAPABILITY_NAMED_IAM
-
