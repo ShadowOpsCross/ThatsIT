@@ -9,7 +9,7 @@ on:
         default: 'warning'
         type: choice
         options:
-          - info
+          - without changes
           - warning
           - debug
     
