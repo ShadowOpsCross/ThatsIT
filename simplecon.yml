@@ -35,7 +35,7 @@ Resources:
   MyEC2Instance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-0749e2c902c836c08
+      ImageId: ami-0e33022c368f209c2
       InstanceType: t2.micro
       SubnetId: !Ref MySubnet
       KeyName: wireguard
