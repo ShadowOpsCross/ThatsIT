@@ -1,4 +1,4 @@
-name: Create EC2 Instance with Elastic IP
+name: Create EC2 Instance
 
 on:
   push:
@@ -23,9 +23,10 @@ jobs:
 
     - name: Create EC2 Instance
       run: |
-        aws ec2 run-instances --image-id ami-0766f68f0b06ab145 --instance-type t2.micro --key-name deployfromgithub --user-data file://user-data-script.sh
+        aws ec2 run-instances --image-id ami-0766f68f0b06ab145 --instance-type t2.micro --key-name deployfromgithub --user-data ''
       env:
         AWS_DEFAULT_REGION: eu-central-1
+
 
     - name: Wait for EC2 Instance to start
       run: |
