@@ -1,105 +1,29 @@
-name: Create EC2 Instance
+name: instance
 
 on:
   push:
     branches:
       - master
 
+    
 jobs:
-  create-ec2-instance:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up AWS CLI
-      run: |
-        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY }}
-        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_KEY }}
-        aws configure set default.region eu-central-1
-      env:
-        AWS_DEFAULT_REGION: eu-central-1
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: eu-central-1
 
-    - name: Create EC2 Instance
-      run: |
-        aws ec2 run-instances --image-id ami-0766f68f0b06ab145 --instance-type t2.micro --key-name deployfromgithub --user-data ''
-      env:
-        AWS_DEFAULT_REGION: eu-central-1
-
-
-    - name: Wait for EC2 Instance to start
-      run: |
-        sleep 30
-      timeout-minutes: 2
-
-    - name: Create Elastic IP
-      run: |
-        EIP=$(aws ec2 allocate-address --domain vpc --query 'PublicIp' --output text)
-        echo "EIP=$EIP" >> $GITHUB_ENV
-      env:
-        AWS_DEFAULT_REGION: eu-central-1
-
-    - name: Associate Elastic IP
-      run: |
-        EIP=${{ env.EIP }}
-        instance_id=$(aws ec2 describe-instances --filters "Name=instance-state-name,Values=running" --query "Reservations[0].Instances[0].InstanceId" --output text)
-        aws ec2 associate-address --instance-id $instance_id --public-ip $EIP
-      env:
-        AWS_DEFAULT_REGION: eu-central-1
-        
-
-    - name: Copy SSH Key from Local Machine
-      run: |
-        EIP=$(cat eip.txt)
-        instance_id=${{ steps.create-ec2.outputs.instance_id }}  # Отримання instance_id з попереднього кроку
-        scp -o "StrictHostKeyChecking=no" -i c/games/arsenii/sshkeys/aws/deployfromgithub.pem  c/games/arsenii/sshkeys/aws/deployfromgithub.pem  ec2-user@$EIP:/home/ec2-user/deployfromgithub.pem
-        ssh -o "StrictHostKeyChecking=no" -i c/games/arsenii/sshkeys/aws/deployfromgithub.pem ec2-user@$EIP 'chmod 600 /home/ec2-user/deployfromgithub.pem '
-      env:
-        AWS_DEFAULT_REGION: eu-central-1
-
-    - name: Install ELK Stack
-      run: |
-        EIP=$(cat eip.txt)
-        instance_id=${{ steps.create-ec2.outputs.instance_id }}
-        scp -o "StrictHostKeyChecking=no" -i /home/ec2-user/deployfromgithub.pem logstash.conf ec2-user@$EIP:/home/ec2-user/logstash.conf
-        ssh -o "StrictHostKeyChecking=no" -i /home/ec2-user/deployfromgithub.pem ec2-user@$EIP 'sudo yum install -y logstash'
-        ssh -o "StrictHostKeyChecking=no" -i /home/ec2-user/deployfromgithub.pem ec2-user@$EIP 'sudo systemctl enable logstash'
-        ssh -o "StrictHostKeyChecking=no" -i /home/ec2-user/deployfromgithub.pem ec2-user@$EIP 'sudo systemctl start logstash'
-      env:
-        AWS_DEFAULT_REGION: eu-central-1
-
-
-    # Залишаються інші кроки незмінними
-    - name: Install PHPMyAdmin
-      run: |
-        EIP=$(cat eip.txt)
-        instance_id=${{ steps.create-ec2.outputs.instance_id }}  # Отримання instance_id з попереднього кроку
-        ssh -o "StrictHostKeyChecking=no" -i /home/ec2-user/your-key.pem ec2-user@$EIP 'sudo amazon-linux-extras install -y lamp-mariadb10.2-php7.2 phpmyadmin'
-      env:
-        DEBIAN_FRONTEND: noninteractive
-
-    - name: Configure PHPMyAdmin for Log Collection
-      run: |
-        EIP=$(cat eip.txt)
-        instance_id=${{ steps.create-ec2.outputs.instance_id }}  # Отримання instance_id з попереднього кроку
-        ssh -o "StrictHostKeyChecking=no" -i /home/ec2-user/your-key.pem ec2-user@$EIP 'echo "\$cfg['Error_Handler']['display'] = false;" | sudo tee -a /etc/phpMyAdmin/config.inc.php'
-        ssh -o "StrictHostKeyChecking=no" -i /home/ec2-user/your-key.pem ec2-user@$EIP 'echo "\$cfg['Error_Handler']['parameters']['display'] = true;" | sudo tee -a /etc/phpMyAdmin/config.inc.php'
-        ssh -o "StrictHostKeyChecking=no" -i /home/ec2-user/your-key.pem ec2-user@$EIP 'echo "\$cfg['Error_Handler']['syslog'] = true;" | sudo tee -a /etc/phpMyAdmin/config.inc.php'
-        ssh -o "StrictHostKeyChecking=no" -i /home/ec2-user/your-key.pem ec2-user@$EIP 'echo "\$cfg['Error_Handler']['parameters']['syslog_target'] = 'udp://$EIP:514';" | sudo tee -a /etc/phpMyAdmin/config.inc.php'
-        ssh -o "StrictHostKeyChecking=no" -i /home/ec2-user/your-key.pem ec2-user@$EIP 'sudo systemctl restart httpd'
-      env:
-        LOGSTASH_HOST: $EIP
-
-    - name: Check Logstash for PHPMyAdmin Logs
-      run: |
-        LOGSTASH_HOST=$EIP
-        LOGSTASH_PORT=514
-        if nc -zv -w 1 $LOGSTASH_HOST $LOGSTASH_PORT; then
-          echo "Logs are successfully being sent to Logstash."
-        else
-          echo "Logs are not reaching Logstash. Check your configuration."
-          exit 1
-        fi
-      env:
-        LOGSTASH_HOST: $EIP
+      - name: Create EC2 Instances
+        id: create-instances
+        run: |
+          aws cloudformation deploy \
+            --stack-name node \
+            --template-file cflogcollect.yml.yml \
+            --capabilities CAPABILITY_NAMED_IAM
