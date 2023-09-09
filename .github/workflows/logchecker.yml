@@ -21,9 +21,10 @@ jobs:
 
     - name: Set up AWS CLI
       run: |
-        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY }}
-        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_KEY }}
-        aws configure set default.region eu-central-1
+        echo "[default]" > ~/.aws/config
+        echo "aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY }}" >> ~/.aws/config
+        echo "aws_secret_access_key = ${{ secrets.AWS_SECRET_KEY }}" >> ~/.aws/config
+        echo "region = eu-central-1" >> ~/.aws/config
       env:
         AWS_DEFAULT_REGION: eu-central-1
 
