@@ -1,4 +1,4 @@
-name: Create EC2 Instance with ELK Stack and PHPMyAdmin
+name: Create EC2 Instance with ELK Stack 
 
 on:
   push:
