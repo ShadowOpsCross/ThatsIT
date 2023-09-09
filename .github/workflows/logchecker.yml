@@ -20,27 +20,30 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
         aws-region: eu-central-1
         
-    - name: Create Elastic IP
-      run: |
-        aws ec2 allocate-address --domain vpc --query 'PublicIp' --output text > eip.txt
-      env:
-        AWS_DEFAULT_REGION: eu-central-1
-
-
     - name: Create EC2 Instance
       id: create-ec2
       run: |
         EIP=$(cat eip.txt)
         instance_id=$(aws ec2 run-instances --image-id ami-0766f68f0b06ab145 --instance-type t2.micro --key-name deployfromgithub associate-public---ip-address --instance-initiated-shutdown-behavior terminate --query 'Instances[0].InstanceId' --output text)
-        aws ec2 associate-address --instance-id $instance_id --public-ip $EIP
         echo "::set-output name=instance_id::$instance_id"  # Збереження instance_id в якості виводу
       env:
         AWS_DEFAULT_REGION: eu-central-1
 
+        
     - name: Wait for EC2 Instance to start
       run: |
         sleep 30
       timeout-minutes: 2
+
+        
+    - name: Create Elastic IP
+      run: |
+        EIP=$(cat eip.txt)
+        instance_id=${{ steps.create-ec2.outputs.instance_id }}
+        aws ec2 associate-address --instance-id $instance_id --public-ip $EIP
+      env:
+        AWS_DEFAULT_REGION: eu-central-1
+        
 
     - name: Copy SSH Key from Local Machine
       run: |
