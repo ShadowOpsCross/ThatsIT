@@ -37,11 +37,12 @@ jobs:
         
     - name: Create Elastic IP
       run: |
-        EIP=$(cat eip.txt)
+        EIP=$(<eip.txt)
         instance_id=${{ steps.create-ec2.outputs.instance_id }}
         aws ec2 associate-address --instance-id $instance_id --public-ip $EIP
       env:
         AWS_DEFAULT_REGION: eu-central-1
+
         
 
     - name: Copy SSH Key from Local Machine
