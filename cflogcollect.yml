@@ -1,0 +1,64 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Create an EC2 instance with an Elastic IP (EIP), ELK Stack, PHPMyAdmin, and configure ELK Stack to collect logs from PHPMyAdmin.
+
+Resources:
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: logssec
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0  # Update this to the appropriate IP range for SSH access
+
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0766f68f0b06ab145
+      InstanceType: t2.micro
+      KeyName: deployfromgithub
+      SecurityGroupIds:
+        - !Ref logssec  # Reference the created security group
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          # Install and configure ELK Stack here
+          # Example installation script for ELK Stack:
+          sudo yum update -y
+          sudo amazon-linux-extras install -y java-openjdk11
+          sudo rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+          sudo tee /etc/yum.repos.d/elasticsearch.repo <<EOF
+          [elasticsearch-7.x]
+          name=Elasticsearch repository for 7.x packages
+          baseurl=https://artifacts.elastic.co/packages/7.x/yum
+          gpgcheck=1
+          gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+          enabled=1
+          autorefresh=1
+          type=rpm-md
+          EOF
+          sudo yum install -y elasticsearch kibana logstash
+          sudo systemctl start elasticsearch
+          sudo systemctl start kibana
+          sudo systemctl start logstash
+          
+
+  EIP:
+    Type: AWS::EC2::EIP
+
+  MyEIPAssociation:
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      InstanceId:
+        Ref: EC2Instance
+
+Outputs:
+  EC2InstanceId:
+    Description: EC2 instance ID
+    Value:
+      Ref: EC2Instance
+  EIP:
+    Description: Elastic IP
+    Value:
+      Ref: EIP
