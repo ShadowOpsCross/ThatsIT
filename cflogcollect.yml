@@ -23,8 +23,6 @@ Resources:
       UserData:
         Fn::Base64: |
           #!/bin/bash
-          # Install and configure ELK Stack here
-          # Example installation script for ELK Stack:
           sudo yum update -y
           sudo amazon-linux-extras install -y java-openjdk11
           sudo rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
@@ -42,7 +40,25 @@ Resources:
           sudo systemctl start elasticsearch
           sudo systemctl start kibana
           sudo systemctl start logstash
-          
+          sudo yum update -y
+          sudo amazon-linux-extras install -y java-openjdk11
+          sudo rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+          sudo tee /etc/yum.repos.d/elasticsearch.repo <<EOF
+          [elasticsearch-7.x]
+          name=Elasticsearch repository for 7.x packages
+          baseurl=https://artifacts.elastic.co/packages/7.x/yum
+          gpgcheck=1
+          gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+          enabled=1
+          autorefresh=1
+          type=rpm-md
+          sudo echo "\$cfg['Error_Handler']['display'] = false;" | sudo tee -a /etc/phpMyAdmin/config.inc.php
+          sudo echo "\$cfg['Error_Handler']['parameters']['display'] = true;" | sudo tee -a /etc/phpMyAdmin/config.inc.php
+          sudo echo "\$cfg['Error_Handler']['syslog'] = true;" | sudo tee -a /etc/phpMyAdmin/config.inc.php
+          sudo systemctl restart httpd
+          LOG_FILE=/var/log/phpmyadmin.log
+          echo "This is a log message." | sudo tee $LOG_FILE
+
 
   EIP:
     Type: AWS::EC2::EIP
