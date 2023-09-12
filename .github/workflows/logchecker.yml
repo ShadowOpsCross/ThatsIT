@@ -24,6 +24,6 @@ jobs:
         id: create-instances
         run: |
           aws cloudformation deploy \
-            --stack-name node \
-            --template-file cflogcollect.yml.yml \
+            --stack-name logcollector \
+            --template-file cflogcollect.yml \
             --capabilities CAPABILITY_NAMED_IAM
