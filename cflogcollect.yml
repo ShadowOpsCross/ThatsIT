@@ -71,18 +71,15 @@ Resources:
           LOG_FILE=/var/log/phpmyadmin.log
           echo "This is a log message." | sudo tee $LOG_FILE
 
-
-
   EIP:
     Type: AWS::EC2::EIP
 
   MyEIPAssociation:
-  Type: AWS::EC2::EIPAssociation
-  DependsOn: EIP
-  Properties:
-    InstanceId:
-      Ref: EC2Instance
-
+    Type: AWS::EC2::EIPAssociation
+    DependsOn: EIP
+    Properties:
+      InstanceId:
+        Ref: EC2Instance
 
 Outputs:
   EC2InstanceId:
@@ -93,3 +90,4 @@ Outputs:
     Description: Elastic IP
     Value:
       Ref: EIP
+
