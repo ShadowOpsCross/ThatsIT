@@ -74,11 +74,10 @@ Resources:
   EIP:
     Type: AWS::EC2::EIP
 
-EIPAssociation:
+  MyEIPAssociation:
     Type: AWS::EC2::EIPAssociation
     Properties:
       InstanceId:
         Ref: EC2Instance
-
 
 
