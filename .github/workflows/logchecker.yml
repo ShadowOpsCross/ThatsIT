@@ -1,4 +1,4 @@
-name: instance
+name: phplogcollector
 
 on:
   workflow_dispatch:
