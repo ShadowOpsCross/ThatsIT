@@ -74,24 +74,11 @@ Resources:
   EIP:
     Type: AWS::EC2::EIP
 
-  EIPAssociation:
-    Type: AWS::EC2::NetworkInterfaceAttachment
+EIPAssociation:
+    Type: AWS::EC2::EIPAssociation
     Properties:
       InstanceId:
         Ref: EC2Instance
-      NetworkInterfaceId:
-        Fn::GetAtt:
-          - EC2Instance
-          - NetworkInterfaces
-          - 0
 
 
-Outputs:
-  EC2InstanceId:
-    Description: EC2 instance ID
-    Value:
-      Ref: EC2Instance
-  EIP:
-    Description: Elastic IP
-    Value:
-      Ref: EIP
+
