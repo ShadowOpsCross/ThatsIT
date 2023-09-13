@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: Create an EC2 instance with an Elastic IP (EIP), ELK Stack, PHPMyAdmin, and configure ELK Stack to collect logs from PHPMyAdmin.
 
 Resources:
-  MySecurityGroup:
+  logssec:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: logssec
