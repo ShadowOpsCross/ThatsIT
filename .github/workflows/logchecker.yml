@@ -1,6 +1,12 @@
 name: instance
 
 on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select environment to deploy to'
+        required: true
+  
   push:
     branches:
       - master
