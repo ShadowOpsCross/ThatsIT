@@ -81,9 +81,10 @@ Resources:
         Ref: EC2Instance
       NetworkInterfaceId:
         Fn::GetAtt:
-          - "EC2Instance"
-          - "NetworkInterfaces"
-          - "0"
+          - EC2Instance
+          - NetworkInterfaces
+          - 0
+
 
 Outputs:
   EC2InstanceId:
