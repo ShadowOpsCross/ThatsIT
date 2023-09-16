@@ -79,5 +79,6 @@ Resources:
     Properties:
       InstanceId:
         Ref: EC2Instance
+        
 
 
