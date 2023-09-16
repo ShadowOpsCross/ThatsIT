@@ -1,11 +1,16 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Create an EC2 instance with an Elastic IP (EIP), ELK Stack, PHPMyAdmin, and configure ELK Stack to collect logs from PHPMyAdmin.
+Description: Create an EC2 instance to collect logs from PHPMyAdmin.
 
 Resources:
-  MyVPC:
+  SVPC:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: 10.0.0.0/16
+  SSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref SVPC
+      CidrBlock: 10.0.0.0/24
 
   logssec:
     Type: AWS::EC2::SecurityGroup
@@ -16,7 +21,7 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0  # Update this to the appropriate IP range for SSH access
-      VpcId: !Ref MyVPC
+      VpcId: !Ref SVPC
 
   EC2Instance:
     Type: AWS::EC2::Instance
@@ -78,13 +83,28 @@ Resources:
           LOG_FILE=/var/log/phpmyadmin.log
           echo "This is a log message." | sudo tee $LOG_FILE
 
-  EIP:
-    Type: AWS::EC2::EIP
-
-  MyEIPAssociation:
-    Type: AWS::EC2::EIPAssociation
+  SSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
     Properties:
-      InstanceId: !Ref EC2Instance
-      EIP: !Ref EIP
-
+      GroupDescription: Allow HTTP and SSH access
+      VpcId: !Ref SVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: '-1'
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: SSecurityGroup
+  SEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref SEC2Instance
 
