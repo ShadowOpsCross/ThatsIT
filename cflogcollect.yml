@@ -6,6 +6,7 @@ Resources:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: 10.0.0.0/16
+
   SSubnet:
     Type: AWS::EC2::Subnet
     Properties:
@@ -31,7 +32,7 @@ Resources:
       KeyName: deployfromgithub
       SecurityGroupIds:
         - !Ref logssec  # Reference the created security group
-      SubnetId: !Select [0, !GetAZs: !Ref MyVPC]
+      SubnetId: !Select [0, !GetAZs '' ]  # Use the first subnet in the VPC
       UserData:
         Fn::Base64: |
           #!/bin/bash
@@ -103,8 +104,10 @@ Resources:
       Tags:
         - Key: Name
           Value: SSecurityGroup
+
   SEIP:
     Type: AWS::EC2::EIP
     Properties:
-      InstanceId: !Ref SEC2Instance
+      InstanceId: !Ref EC2Instance
+
 
