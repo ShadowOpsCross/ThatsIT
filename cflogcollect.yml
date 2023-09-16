@@ -2,6 +2,11 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: Create an EC2 instance with an Elastic IP (EIP), ELK Stack, PHPMyAdmin, and configure ELK Stack to collect logs from PHPMyAdmin.
 
 Resources:
+  MyVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+
   logssec:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -11,6 +16,7 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0  # Update this to the appropriate IP range for SSH access
+      VpcId: !Ref MyVPC
 
   EC2Instance:
     Type: AWS::EC2::Instance
@@ -20,6 +26,7 @@ Resources:
       KeyName: deployfromgithub
       SecurityGroupIds:
         - !Ref logssec  # Reference the created security group
+      SubnetId: !Select [0, !GetAZs !Ref MyVPC]  # Use the first subnet in the VPC
       UserData:
         Fn::Base64: |
           #!/bin/bash
@@ -77,9 +84,7 @@ Resources:
   MyEIPAssociation:
     Type: AWS::EC2::EIPAssociation
     Properties:
-      InstanceId:
-        Ref: EC2Instance
-        
-        
+      InstanceId: !Ref EC2Instance
+      EIP: !Ref EIP
 
 
