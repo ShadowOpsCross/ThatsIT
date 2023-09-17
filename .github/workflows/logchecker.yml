@@ -10,7 +10,6 @@ on:
     branches:
       - master
 
-    
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -33,3 +32,20 @@ jobs:
             --template-file cflogcollect.yml \
             --capabilities CAPABILITY_NAMED_IAM
             --parameter-overrides Region=eu-central-1
+
+      - name: Get EC2 Instance ID
+        id: get-instance-id
+        run: |
+          INSTANCE_ID=$(aws cloudformation describe-stack-resources --stack-name logcollector --logical-resource-id EC2Instance --query 'StackResources[0].PhysicalResourceId' --output text)
+          echo "Instance ID: $INSTANCE_ID"
+          echo "::set-output name=instance_id::$INSTANCE_ID"
+      
+      - name: SSH into EC2 Instance and Retrieve Logs
+        if: steps.create-instances.outputs.StackStatus == 'UPDATE_COMPLETE' || steps.create-instances.outputs.StackStatus == 'CREATE_COMPLETE'
+        run: |
+          INSTANCE_ID="${{ steps.get-instance-id.outputs.instance_id }}"
+          PRIVATE_KEY="${{AWS_ACCESS_KEY}}"  # Замініть на ваш приватний ключ для SSH
+          
+          # SSH до інстансу і вивести лог у консоль
+          ssh -i $PRIVATE_KEY ec2-user@${INSTANCE_ID} 'cat /var/log/phpmyadmin.log'
+
