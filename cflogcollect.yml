@@ -6,12 +6,34 @@ Resources:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: 10.0.0.0/16
-
   SSubnet:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref SVPC
       CidrBlock: 10.0.0.0/24
+  SInternetGateway:
+    Type: AWS::EC2::InternetGateway
+  SVPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref SVPC
+      InternetGatewayId: !Ref SInternetGateway
+  SRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref SVPC
+  SRoute:
+    Type: AWS::EC2::Route
+    DependsOn: SInternetGateway
+    Properties:
+      RouteTableId: !Ref SRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref SInternetGateway
+  SSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SSubnet
+      RouteTableId: !Ref SRouteTable
 
   logssec:
     Type: AWS::EC2::SecurityGroup
@@ -109,6 +131,7 @@ Resources:
     Type: AWS::EC2::EIP
     Properties:
       InstanceId: !Ref EC2Instance
+
 
       
 
