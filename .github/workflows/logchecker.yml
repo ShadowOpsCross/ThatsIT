@@ -32,3 +32,4 @@ jobs:
             --stack-name logcollector \
             --template-file cflogcollect.yml \
             --capabilities CAPABILITY_NAMED_IAM
+            --parameter-overrides Region=eu-central-1
