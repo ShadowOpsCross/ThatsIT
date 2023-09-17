@@ -32,7 +32,7 @@ Resources:
       KeyName: deployfromgithub
       SecurityGroupIds:
         - !Ref logssec  # Reference the created security group
-      SubnetId: !Select [!Ref "AWS::Region"]
+      SubnetId: !Ref SSubnet
       UserData:
         Fn::Base64: |
           #!/bin/bash
