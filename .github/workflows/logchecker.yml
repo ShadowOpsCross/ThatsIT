@@ -46,6 +46,6 @@ jobs:
         run: |
           INSTANCE_ID="${{ steps.get-instance-id.outputs.instance_id }}"
           PRIVATE_KEY="${{ secrets.AWS_ACCESS_KEY }}" 
-          # SSH до інстансу і вивести лог у консоль
-          ssh -i $PRIVATE_KEY ec2-user@${INSTANCE_ID} 'cat /var/log/phpmyadmin.log'
+          echo "priv_key = $PRIVATE_KEY and inst_id = $INSTANCE_ID"
+          
 
