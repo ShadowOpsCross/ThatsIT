@@ -27,11 +27,12 @@ jobs:
       - name: Create EC2 Instances
         id: create-instances
         run: |
-          aws cloudformation deploy \
-            --stack-name logcollector \
-            --template-file cflogcollect.yml \
-            --capabilities CAPABILITY_NAMED_IAM
-            --parameter-overrides Region=eu-central-1
+            aws cloudformation deploy \
+              --stack-name logcollector \
+              --template-file cflogcollect.yml \
+              --capabilities CAPABILITY_NAMED_IAM \
+              --parameter-overrides Region=eu-central-1
+
 
       - name: Get EC2 Instance ID
         id: get-instance-id
