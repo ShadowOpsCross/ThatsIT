@@ -43,10 +43,13 @@ jobs:
           echo "::set-output name=instance_id::$INSTANCE_ID"
       
       - name: SSH into EC2 Instance and Retrieve Logs
+        
         run: |
           INSTANCE_ID="${{ steps.get-instance-id.outputs.instance_id }}"
-          PRIVATE_KEY="${{ secrets.AWS_ACCESS_KEY }}" 
-          echo "priv_key = $PRIVATE_KEY and inst_id = $INSTANCE_ID"
+          PRIVATE_KEY="${{ secrets.YOUR_SSH_PRIVATE_KEY }}" 
+          
+          # SSH до інстансу і вивести лог у консоль
+          ssh -i $PRIVATE_KEY ec2-user@${INSTANCE_ID} 'cat /var/log/phpmyadmin.log'
           
 
 
