@@ -45,7 +45,7 @@ jobs:
         if: steps.create-instances.outputs.StackStatus == 'UPDATE_COMPLETE' || steps.create-instances.outputs.StackStatus == 'CREATE_COMPLETE'   
         run: |  
           IP_ADDRESS="${{ steps.get-instance-ip.outputs.instance_ip }}"
-          PRIVATE_KEY="${{ secrets.AWS_ACCESS_KEY }}" 
+          PRIVATE_KEY="${{ secrets.DEPLOYFROMGITHUB_KEY }}" 
           
           # SSH до інстансу за IP-адресою і вивести лог у консоль
           ssh -i $PRIVATE_KEY ec2-user@$IP_ADDRESS 'cat /var/log/phpmyadmin.log'
