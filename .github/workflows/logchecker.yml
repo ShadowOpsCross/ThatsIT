@@ -46,8 +46,10 @@ jobs:
         run: |  
           IP_ADDRESS="${{ steps.get-instance-ip.outputs.instance_ip }}"
           PRIVATE_KEY="${{ secrets.DEPLOYFROMGITHUB_KEY }}" 
-          
+    
           # SSH до інстансу за IP-адресою і вивести лог у консоль
+          echo "Attempting SSH to $IP_ADDRESS"
           echo "$PRIVATE_KEY" > key.pem
           chmod 600 key.pem
           ssh -i key.pem ec2-user@$IP_ADDRESS 'cat /var/log/phpmyadmin.log'
+
