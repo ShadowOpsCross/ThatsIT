@@ -50,6 +50,7 @@ jobs:
           # SSH до інстансу за IP-адресою і вивести лог у консоль
           ssh -i $PRIVATE_KEY ec2-user@$IP_ADDRESS 
           cat '/var/log/phpmyadmin.log'
+          
 
           
 
