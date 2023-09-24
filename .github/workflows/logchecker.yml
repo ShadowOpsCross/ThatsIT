@@ -42,7 +42,7 @@ jobs:
           echo "::set-output name=instance_ip::$IP_ADDRESS"
       
       - name: SSH into EC2 Instance and Retrieve Logs
-        if: steps.create-instances.outputs.StackStatus == 'UPDATE_COMPLETE' || steps.create-instances.outputs.StackStatus == 'CREATE_COMPLETE'   
+      
         run: |  
           IP_ADDRESS="${{ steps.get-instance-ip.outputs.instance_ip }}"
           PRIVATE_KEY="${{ secrets.DEPLOYFROMGITHUB_KEY }}" 
