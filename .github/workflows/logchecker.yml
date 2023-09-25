@@ -53,3 +53,4 @@ jobs:
           chmod 600 key.pem
           ssh -i key.pem ec2-user@$IP_ADDRESS 'cat /var/log/phpmyadmin.log'
 
+
