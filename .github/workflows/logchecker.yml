@@ -50,5 +50,6 @@ jobs:
           echo "Attempting SSH to $IP_ADDRESS"
           echo "$PRIVATE_KEY" > key.pem
           chmod 600 key.pem
-           
+          ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@$IP_ADDRESS 'ls -la'
+
 
