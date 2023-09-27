@@ -1,3 +1,4 @@
+
 name: phplogcollector
 
 on:
@@ -32,7 +33,6 @@ jobs:
               --template-file cflogcollect.yml \
               --capabilities CAPABILITY_NAMED_IAM \
               --parameter-overrides Region=eu-central-1
-
       - name: Get EC2 Instance IP Address
         id: get-instance-ip
         run: |
@@ -50,6 +50,6 @@ jobs:
           echo "Attempting SSH to $IP_ADDRESS"
           echo "$PRIVATE_KEY" > key.pem
           chmod 600 key.pem
-          ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@$IP_ADDRESS 'ls -la'
+           ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@$IP_ADDRESS 'ls -la'
 
 
