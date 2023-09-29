@@ -57,56 +57,54 @@ Resources:
       SubnetId: !Ref SSubnet
       UserData:
         Fn::Base64: |
-	  #!/bin/bash
+          #!/bin/bash
 
-         sudo yum update -y
-    	 sudo amazon-linux-extras install -y java-openjdk11
-    	 sudo rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
-     	 sudo tee /etc/yum.repos.d/elasticsearch.repo <<EOF
-    	 [elasticsearch-7.x]
-     	 name=Elasticsearch repository for 7.x packages
-     	 baseurl=https://artifacts.elastic.co/packages/7.x/yum
-     	 gpgcheck=1
-     	 gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
-     	 enabled=1
-    	 autorefresh=1
-    	 type=rpm-md
-     	 EOF
-     	 sudo yum install -y elasticsearch kibana logstash
-    	 sudo systemctl start elasticsearch
-     	 sudo systemctl start kibana
-     	 sudo systemctl start logstash
+          sudo yum update -y
+          sudo amazon-linux-extras install -y java-openjdk11
+          sudo rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+          sudo tee /etc/yum.repos.d/elasticsearch.repo <<EOF
+          [elasticsearch-7.x]
+          name=Elasticsearch repository for 7.x packages
+          baseurl=https://artifacts.elastic.co/packages/7.x/yum
+          gpgcheck=1
+          gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+          enabled=1
+          autorefresh=1
+          type=rpm-md
+          EOF
+          sudo yum install -y elasticsearch kibana logstash
+          sudo systemctl start elasticsearch
+          sudo systemctl start kibana
+          sudo systemctl start logstash
 
-	 sudo amazon-linux-extras install -y lamp-mariadb10.2-php7.2 phpmyadmin
-    	 sudo bash -c "echo '\$cfg[\"Error_Handler\"][\"display\"] = false;' >> /etc/phpMyAdmin/config.inc.php"
-    	 sudo bash -c "echo '\$cfg[\"Error_Handler\"][\"parameters\"][\"display\"] = true;' >> /etc/phpMyAdmin/config.inc.php"
-     	 sudo bash -c "echo '\$cfg[\"Error_Handler\"][\"syslog\"] = true;' >> /etc/phpMyAdmin/config.inc.php"
-	 sudo systemctl restart httpd
+          sudo amazon-linux-extras install -y lamp-mariadb10.2-php7.2 phpmyadmin
+          sudo bash -c "echo '\$cfg[\"Error_Handler\"][\"display\"] = false;' >> /etc/phpMyAdmin/config.inc.php"
+          sudo bash -c "echo '\$cfg[\"Error_Handler\"][\"parameters\"][\"display\"] = true;' >> /etc/phpMyAdmin/config.inc.php"
+          sudo bash -c "echo '\$cfg[\"Error_Handler\"][\"syslog\"] = true;' >> /etc/phpMyAdmin/config.inc.php"
+          sudo systemctl restart httpd
 
-     	 # Налаштування Logstash для збору логів з PHPMyAdmin
-     	 sudo tee /etc/logstash/conf.d/phpmyadmin.conf <<EOF
-		input {
-			file {
-				path => "/var/log/phpmyadmin.log"
-				start_position => "beginning"
-			}
-		}
-		filter {
-			grok {
-				match => { "message" => "%{COMBINEDAPACHELOG}" }
-			}
-		}
-		output {
-			elasticsearch {
-				hosts => ["localhost:9200"]
-				index => "phpmyadmin-%{+YYYY.MM.dd}"
-			}
-		}
-		EOF
+          # Налаштування Logstash для збору логів з PHPMyAdmin
+          sudo tee /etc/logstash/conf.d/phpmyadmin.conf <<EOF
+          input {
+            file {
+              path => "/var/log/phpmyadmin.log"
+              start_position => "beginning"
+            }
+          }
+          filter {
+            grok {
+              match => { "message" => "%{COMBINEDAPACHELOG}" }
+            }
+          }
+          output {
+            elasticsearch {
+              hosts => ["localhost:9200"]
+              index => "phpmyadmin-%{+YYYY.MM.dd}"
+            }
+          }
+          EOF
 
-	 sudo systemctl restart logstash
-
-
+          sudo systemctl restart logstash
 
   SSecurityGroup:
     Type: AWS::EC2::SecurityGroup
