@@ -2,23 +2,22 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: Create an EC2 instance to collect logs from PHPMyAdmin.
 
 
-EC2Instance:
-    Type: AWS::EC2::Instance
-    Properties:
-      ImageId: ami-0766f68f0b06ab145
-      InstanceType: t2.micro
-      KeyName: deployfromgithub
+        EC2Instance:
+             Type: AWS::EC2::Instance
+             Properties:
+                ImageId: ami-0766f68f0b06ab145
+                InstanceType: t2.micro
+                KeyName: deployfromgithub
+                UserData:
+                Fn::Base64: |
+                    #!/bin/bash
 
-      UserData:
-        Fn::Base64: |
-          #!/bin/bash
+                    # Оновлення пакетів та встановлення програми hello-world
+                    sudo yum update -y
+                    sudo yum install -y hello-world
 
-          # Оновлення пакетів та встановлення програми hello-world
-          sudo yum update -y
-          sudo yum install -y hello-world
-
-          # Вивід команди з програми hello-world
-          hello-world
+                    # Вивід команди з програми hello-world
+                    hello-world
 
           
  
