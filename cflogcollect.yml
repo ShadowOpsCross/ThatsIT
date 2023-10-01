@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: Create an EC2 instance to collect logs from PHPMyAdmin.
 
 
-  EC2Instance:
+EC2Instance:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: ami-0766f68f0b06ab145
