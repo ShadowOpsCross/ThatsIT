@@ -1,0 +1,21 @@
+name: Deploy to Netlify
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy to Netlify
+        run: |
+          npm install  # Install project dependencies if needed
+          npm run build  # Replace with your build command
+          npx netlify-cli deploy --prod --dir=build --site ${{ secrets.NETLIFY_SITE_ID }}
+        working-directory: ${{ github.workspace }}
