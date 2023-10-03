@@ -13,10 +13,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Deploy to Netlify
+      - name: Install Dependencies and Build
         run: |
           npm install  # Install project dependencies if needed
-          npm init
           npm run build  # Replace with your build command
+        working-directory: ${{ github.workspace }}
+
+      - name: Deploy to Netlify
+        run: |
           npx netlify-cli deploy --prod --dir=build --site ${{ secrets.NETLIFY_SITE_ID }}
         working-directory: ${{ github.workspace }}
