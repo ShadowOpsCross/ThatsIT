@@ -1,4 +1,4 @@
-name: Build and Deploy to Netlify
+name: Deploy index.html to Netlify
 
 on:
   push:
@@ -13,12 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install Dependencies and Build
-        run: |
-          npm install thatsit
-          npm run thatsit
-        working-directory: ${{ github.workspace }}
-
       - name: Deploy to Netlify
         run: |
           curl -X POST \
@@ -26,4 +20,5 @@ jobs:
                -H "Authorization: Bearer ${{ secrets.NETLIFY_SITE_ID }}" \
                --data-binary "@index.html" \
                "https://api.netlify.com/api/v1/sites/${{ secrets.NETLIFY_SITE_ID }}/deploys"
+
 
