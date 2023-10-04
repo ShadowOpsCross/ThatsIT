@@ -1,4 +1,4 @@
-name: Deploy to Netlify
+name: Build and Deploy to Netlify
 
 on:
   push:
@@ -16,10 +16,14 @@ jobs:
       - name: Install Dependencies and Build
         run: |
           npm install thatsit
-          npm run thatsit
+          npm run build thatsit
         working-directory: ${{ github.workspace }}
 
       - name: Deploy to Netlify
         run: |
-          npx netlify-cli deploy --prod --dir=build --site ${{ secrets.NETLIFY_SITE_ID }}
-        working-directory: ${{ github.workspace }}
+          curl -X POST \
+               -H "Content-Type: application/zip" \
+               -H "Authorization: Bearer ${{ secrets.NETLIFY_SITE_ID }}" \
+               --data-binary "@index.html" \
+               "https://api.netlify.com/api/v1/sites/${{ secrets.NETLIFY_SITE_ID }}/deploys"
+
