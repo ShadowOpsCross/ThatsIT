@@ -16,7 +16,7 @@ jobs:
       - name: Install Dependencies and Build
         run: |
           npm install thatsit
-          npm run build thatsit
+          npm run thatsit
         working-directory: ${{ github.workspace }}
 
       - name: Deploy to Netlify
