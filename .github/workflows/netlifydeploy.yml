@@ -15,6 +15,7 @@ jobs:
 
       - name: Install Dependencies and Build
         run: |
+          npm init
           npm install  # Install project dependencies if needed
           npm run build  # Replace with your build command
         working-directory: ${{ github.workspace }}
