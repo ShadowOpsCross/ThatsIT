@@ -10,6 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Netlify Set Up
+        run: |
+          npm ci
+          npm run all
+          
       - name: Checkout code
         uses: actions/checkout@v2
 
