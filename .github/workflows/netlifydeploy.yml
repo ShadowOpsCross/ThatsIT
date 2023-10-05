@@ -14,5 +14,6 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Deploy to Netlify
-        run: npx netlify-cli deploy --prod
+        run: npx netlify-cli deploy --prod --site 2500d6ae-10ea-4227-9ada-e40377264c93
+
 
