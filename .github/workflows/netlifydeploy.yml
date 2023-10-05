@@ -12,9 +12,9 @@ jobs:
     steps:
       - name: Netlify Set Up
         run: |
-          npm ci
+          npm thatsits
           npm run all
-          
+
       - name: Checkout code
         uses: actions/checkout@v2
 
