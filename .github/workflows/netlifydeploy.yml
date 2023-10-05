@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Netlify Set Up
         run: |
-          npm thatsit
+          npm install thatsit
           npm run all
 
       - name: Checkout code
