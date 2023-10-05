@@ -1,4 +1,4 @@
-name: Deploy index.html to Netlify
+name: Deploy to Netlify
 
 on:
   push:
@@ -10,20 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Netlify Set Up
-        run: |
-          npm install thatsit
-          npm run all
-
       - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Deploy to Netlify
-        run: |
-          curl -X POST \
-               -H "Content-Type: application/zip" \
-               -H "Authorization: Bearer ${{ secrets.NETLIFY_SITE_ID }}" \
-               --data-binary "@index.html" \
-               "https://api.netlify.com/api/v1/sites/${{ secrets.NETLIFY_SITE_ID }}/deploys"
-
+        run: npx netlify-cli deploy --prod
 
