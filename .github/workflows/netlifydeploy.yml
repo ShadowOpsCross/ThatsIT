@@ -1,0 +1,19 @@
+name: Deploy to Netlify
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy to Netlify
+        run: npx netlify-cli deploy --prod --site 7200ba56-4a3c-43ba-9c07-9901b6d9e24e
+
+

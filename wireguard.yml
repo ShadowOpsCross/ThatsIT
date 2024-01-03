@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  KeyName:
+    Type: "AWS::EC2::KeyPair::ec2-wireguard"
+    Description: "Name of an existing EC2 KeyPair to enable SSH access to the instances"
+
+Resources:
+  MyInstance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      ImageId: "ami-0c7217cdde317cfec"  
+      InstanceType: "t2.micro"
+      KeyName: !Ref "ec2-wireguard"
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          apt-get update -y
+          apt-get install -y wireguard
+
+          mkdir /etc/wireguard/
+
+          wg genkey | tee /etc/wireguard/privatekey | wg pubkey | tee /etc/wireguard/publickey
+
+          cat <<EOL > /etc/wireguard/wg0.conf
+          [Interface]
+          Address = 10.0.0.1/24
+          SaveConfig = true
+          ListenPort = 51820
+          PrivateKey = $(cat /etc/wireguard/privatekey)
+          PostUp = iptables -I INPUT -p udp --dport 51820 -j ACCEPT
+          PostUp = iptables -I FORWARD -i eth0 -o wg0 -j ACCEPT
+          PostUp = iptables -I FORWARD -i wg0 -j ACCEPT
+          PostUp = iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+          PostDown = iptables -D INPUT -p udp --dport 51820 -j ACCEPT
+          PostDown = iptables -D FORWARD -i eth0 -o wg0 -j ACCEPT
+          PostDown = iptables -D FORWARD -i wg0 -j ACCEPT
+          PostDown = iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+          EOL
+
+          systemctl enable wg-quick@wg0
+          systemctl start wg-quick@wg0
+
+          echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
+          sysctl -p
+
+          wg-quick up wg0
+
+          # Add code here to generate QR code for WireGuard configuration
+          EOL
+      SecurityGroupIds:
+        - !Ref MySecurityGroup
+
+  MySecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "Enable SSH and WireGuard"
+      SecurityGroupIngress:
+        - CidrIp: "0.0.0.0/0"
+          IpProtocol: "tcp"
+          FromPort: 22
+          ToPort: 22
+        - CidrIp: "10.0.0.0/16"
+          IpProtocol: "udp"
+          FromPort: 51820
+          ToPort: 51820
