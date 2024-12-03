@@ -1,0 +1,135 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Create an EC2 instance to collect logs from PHPMyAdmin.
+
+Resources:
+  SVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+  SSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref SVPC
+      CidrBlock: 10.0.0.0/24
+  SInternetGateway:
+    Type: AWS::EC2::InternetGateway
+  SVPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref SVPC
+      InternetGatewayId: !Ref SInternetGateway
+  SRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref SVPC
+  SRoute:
+    Type: AWS::EC2::Route
+    DependsOn: SInternetGateway
+    Properties:
+      RouteTableId: !Ref SRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref SInternetGateway
+  SSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SSubnet
+      RouteTableId: !Ref SRouteTable
+
+  logssec:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: logssec
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0  # Update this to the appropriate IP range for SSH access
+      VpcId: !Ref SVPC
+
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0766f68f0b06ab145
+      InstanceType: t2.micro
+      KeyName: deployfromgithub
+      SecurityGroupIds:
+        - !Ref logssec  # Reference the created security group
+      SubnetId: !Ref SSubnet
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+
+          sudo yum update -y
+          sudo amazon-linux-extras install -y java-openjdk11
+          sudo rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+          sudo tee /etc/yum.repos.d/elasticsearch.repo <<EOF
+          [elasticsearch-7.x]
+          name=Elasticsearch repository for 7.x packages
+          baseurl=https://artifacts.elastic.co/packages/7.x/yum
+          gpgcheck=1
+          gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+          enabled=1
+          autorefresh=1
+          type=rpm-md
+          EOF
+          sudo yum install -y elasticsearch kibana logstash
+          sudo systemctl start elasticsearch
+          sudo systemctl start kibana
+          sudo systemctl start logstash
+
+          sudo amazon-linux-extras install -y lamp-mariadb10.2-php7.2 phpmyadmin
+          sudo bash -c "echo '\$cfg[\"Error_Handler\"][\"display\"] = false;' >> /etc/phpMyAdmin/config.inc.php"
+          sudo bash -c "echo '\$cfg[\"Error_Handler\"][\"parameters\"][\"display\"] = true;' >> /etc/phpMyAdmin/config.inc.php"
+          sudo bash -c "echo '\$cfg[\"Error_Handler\"][\"syslog\"] = true;' >> /etc/phpMyAdmin/config.inc.php"
+          sudo systemctl restart httpd
+
+          # Налаштування Logstash для збору логів з PHPMyAdmin
+          sudo tee /etc/logstash/conf.d/phpmyadmin.conf <<EOF
+          input {
+            file {
+              path => "/var/log/phpmyadmin.log"
+              start_position => "beginning"
+            }
+          }
+          filter {
+            grok {
+              match => { "message" => "%{COMBINEDAPACHELOG}" }
+            }
+          }
+          output {
+            elasticsearch {
+              hosts => ["localhost:9200"]
+              index => "phpmyadmin-%{+YYYY.MM.dd}"
+            }
+          }
+          EOF
+
+          sudo systemctl restart logstash
+          cat /var/log/cloud-init-output.log
+
+          
+  SSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow HTTP and SSH access
+      VpcId: !Ref SVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: '-1'
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: SSecurityGroup
+
+  SEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref EC2Instance

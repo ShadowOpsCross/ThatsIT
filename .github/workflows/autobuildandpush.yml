@@ -1,0 +1,48 @@
+name: Deploy to S3 and run web server
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  AWS_REGION: eu-central-1
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  S3_BUCKET_NAME: <your_s3_bucket_name>
+  IMAGE_NAME: <your_docker_image_name>
+  CONTAINER_NAME: <your_container_name>
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install docker.io
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${env.IMAGE_NAME}:${{ github.sha }} .
+
+      - name: Deploy to S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl public-read --delete
+        env:
+          AWS_S3_BUCKET: ${{ env.S3_BUCKET_NAME }}
+          AWS_REGION: ${{ env.AWS_REGION }}
+          SOURCE_DIR: '.'
+
+      - name: Run web server
+        uses: appleboy/ssh-action@master
+        with:
+          host: <your_s3_bucket_domain>
+          username: <your_ssh_username>
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            docker run -d -p 80:80 --name ${env.CONTAINER_NAME} ${env.IMAGE_NAME}:${{ github.sha }} 

@@ -1,0 +1,55 @@
+
+name: phplogcollector
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select environment to deploy to'
+        required: true
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: eu-central-1
+
+      - name: Create EC2 Instances
+        id: create-instances
+        run: |
+            aws cloudformation deploy \
+              --stack-name logcollector \
+              --template-file cflogcollect.yml \
+              --capabilities CAPABILITY_NAMED_IAM \
+              --parameter-overrides Region=eu-central-1
+      - name: Get EC2 Instance IP Address
+        id: get-instance-ip
+        run: |
+          INSTANCE_ID=$(aws cloudformation describe-stack-resources --stack-name logcollector --logical-resource-id EC2Instance --query 'StackResources[0].PhysicalResourceId' --output text)
+          IP_ADDRESS=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
+          echo "Instance IP Address: $IP_ADDRESS"
+          echo "::set-output name=instance_ip::$IP_ADDRESS"
+      
+      - name: SSH into EC2 Instance and Retrieve Logs
+       
+        run: |  
+          IP_ADDRESS="${{ steps.get-instance-ip.outputs.instance_ip }}"
+          PRIVATE_KEY="${{ secrets.DEPLOYFROMGITHUB_KEY }}" 
+    
+          echo "Attempting SSH to $IP_ADDRESS"
+          echo "$PRIVATE_KEY" > key.pem
+          chmod 600 key.pem
+           ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@$IP_ADDRESS 'ls -la'
+
+
